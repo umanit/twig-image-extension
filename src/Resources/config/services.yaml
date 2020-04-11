@@ -1,0 +1,13 @@
+services:
+    umanit_twig_image.extension:
+        class: Umanit\TwigImage\Extension
+        public: false
+        tags: ['twig.extension']
+
+    umanit_twig_image.runtime:
+        class: Umanit\TwigImage\Runtime
+        public: false
+        arguments:
+            - '@liip_imagine.cache.manager'
+            - '@liip_imagine.filter.manager'
+        tags: ['twig.runtime']

@@ -1,0 +1,24 @@
+<?php
+
+namespace Umanit\TwigImage;
+
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+
+/**
+ * Class Extension
+ */
+class Extension extends AbstractExtension
+{
+    /**
+     * @return array
+     */
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('umanit_image_figure', [Runtime::class, 'getUmanitImageFigure']),
+            new TwigFunction('umanit_image_picture', [Runtime::class, 'getUmanitImagePicture']),
+            new TwigFunction('umanit_image_srcset', [Runtime::class, 'getUmanitImageSrcset']),
+        ];
+    }
+}
