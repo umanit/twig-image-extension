@@ -102,9 +102,7 @@ always add to facilitate the integration with [yall.js](https://github.com/malch
 
 ### umanit_image_picture
 
-génère une balise picture avec à l'intérieur une img et X source. Chaque source peut définir un attribut media au besoin
-
-Generates a `picture` tag with an `img` inside and X `source`.
+Generates a `picture` tag with an `img` inside and X `source`. Each `source` can have a `media` attribute if needed.
 
 #### Parameters
 
