@@ -1,0 +1,24 @@
+{
+    "name": "umanit/twig-image-extension",
+    "description": "An extension to facilitate the integration of responsive images' markup in Twig templates.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["twig", "extension", "responsive", "image"],
+    "authors": [
+        {
+            "name": "Vivien",
+            "email": "vdebona@umanit.fr"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Umanit\\TwigImage\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^7.3",
+        "liip/imagine-bundle": "^2.3",
+        "twig/twig": "^2.12|^3.0"
+    }
+}
