@@ -32,7 +32,7 @@ return [
 [yall.js](https://github.com/malchata/yall.js/):
 
 ```bash
-bin/console assets:install --symlink`
+bin/console assets:install --symlink
 ```
 
 ## Configuration
@@ -62,7 +62,7 @@ The following Twig functions are available in your templates.
 1. [umanit_image_figure](#umanit_image_figure)
 1. [umanit_image_picture](#umanit_image_picture)
 1. [umanit_image_srcset](#umanit_image_srcset)
-1. [(Optional) Javascript module to instantiate yall.js](#-optional--javascript-module-to-instantiate-yalljs)
+1. [(Optional) Javascript module to instantiate yall.js](#optional-javascript-module-to-instantiate-yalljs)
 
 When a [LiipImagine filter](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/filters.html#built-in-filters) is
 used, the extension will read his configuration and automatically takes the right width to apply in the markup.
