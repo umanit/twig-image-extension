@@ -105,6 +105,7 @@ HTML;
         foreach ($sources as $sourcePath => $sourceDataset) {
             $sourceFilters = $sourceDataset['filters'] ?? $sourceDataset;
             $media         = '';
+            $sizes = '';
             $srcSet        = $this->getUmanitImageSrcset($sourcePath, $sourceFilters);
 
             if (isset($sourceDataset['media'])) {
@@ -112,11 +113,11 @@ HTML;
             }
 
             if (isset($sourceDataset['sizes'])) {
-                $media = sprintf('sizes="%s"', $sourceDataset['sizes']);
+                $sizes = sprintf('sizes="%s"', $sourceDataset['sizes']);
             }
 
             $sourcesHtml[] = <<<HTML
-<source $media data-srcset="$srcSet">
+<source $media $sizes data-srcset="$srcSet">
 HTML;
         }
 
