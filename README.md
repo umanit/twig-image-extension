@@ -126,6 +126,8 @@ if needed.
     umanit_image_picture(
       image.path,
       'tiny_thumbnail',
+      'small_thumbnail',
+      ['thumbnail', 'large_thumbnail'],
       {
         (image.path): {
           'media': '(min-width: 768px)',
@@ -147,8 +149,10 @@ if needed.
     <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w">
     <img
       class="img img-fluid"
-      src="https://domain.tld/media/cache/tiny_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
       alt="alt img"
+      src="https://domain.tld/media/cache/tiny_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+      data-src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+      data-srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
     >
   </picture>
   ```
