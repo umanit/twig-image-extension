@@ -18,6 +18,15 @@ class Runtime
     /** @var array */
     private $filters;
 
+    /** @var bool */
+    private $lazyLoadEnabled;
+
+    /** @var string */
+    private $lazyLoadClassSelector;
+
+    /** @var string */
+    private $lazyLoadPlaceholderClassSelector;
+
     /**
      * AppExtension constructor.
      *
@@ -31,81 +40,103 @@ class Runtime
     }
 
     /**
-     * @param string $path
-     * @param string $placeholderFilter
-     * @param string $srcFilter
-     * @param array  $srcsetFilters
-     * @param string $alt
-     * @param string $class
-     * @param string $sizes
+     * @param bool   $enabled
+     * @param string $classSelector
+     * @param string $placeholderClassSelector
+     */
+    public function setLazyLoadConfiguration(
+        bool $enabled,
+        string $classSelector,
+        string $placeholderClassSelector
+    ): void {
+        $this->lazyLoadEnabled                  = $enabled;
+        $this->lazyLoadClassSelector            = $classSelector;
+        $this->lazyLoadPlaceholderClassSelector = $placeholderClassSelector;
+    }
+
+    /**
+     * @param string      $path
+     * @param string      $srcFilter
+     * @param string|null $placeholderFilter
+     * @param array       $srcsetFilters
+     * @param string      $alt
+     * @param string      $class
+     * @param string      $sizes
      *
      * @return string
      */
     public function getUmanitImageFigure(
         string $path,
-        string $placeholderFilter,
         string $srcFilter,
+        string $placeholderFilter = null,
         array $srcsetFilters = [],
         string $alt = '',
         string $class = '',
         string $sizes = '100vw'
     ): string {
-        $srcsetHtml      = $this->getUmanitImageSrcset($path, $srcsetFilters);
-        $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
-        $srcPath         = $this->cacheManager->getBrowserPath($path, $srcFilter);
+        $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
+            $path,
+            $srcFilter,
+            $srcsetFilters,
+            $alt,
+            $class,
+            $sizes
+        );
+
+        if (!$this->lazyLoadEnabled) {
+            return <<<HTML
+<figure>
+  $nonLazyLoadImgMarkup
+</figure>
+HTML;
+        }
+
+        $imgMarkup = $this->getImgMarkup(
+            $path,
+            $srcFilter,
+            $placeholderFilter,
+            $srcsetFilters,
+            $alt,
+            $class,
+            $sizes
+        );
 
         return <<<HTML
 <figure>
-  <img 
-    alt="$alt"
-    class="lazy lazy-placeholder $class"
-    src="$placeholderPath"
-    data-src="$srcPath"
-    data-srcset="$srcsetHtml"
-    sizes="$sizes"
-  >
+  $imgMarkup
   <noscript>
-    <img
-      alt="$alt"
-      class="$class"
-      src="$srcPath"
-      srcset="$srcsetHtml"
-      sizes="$sizes"
-    >
+    $nonLazyLoadImgMarkup
   </noscript>
 </figure>
 HTML;
     }
 
     /**
-     * @param string $path
-     * @param string $placeholderFilter
-     * @param string $srcFilter
-     * @param array  $srcsetFilters
-     * @param array  $sources
-     * @param string $alt
-     * @param string $class
+     * @param string      $path
+     * @param string      $srcFilter
+     * @param string|null $placeholderFilter
+     * @param array       $srcsetFilters
+     * @param array       $sources
+     * @param string      $alt
+     * @param string      $class
      *
      * @return string
      */
     public function getUmanitImagePicture(
         string $path,
-        string $placeholderFilter,
         string $srcFilter,
+        string $placeholderFilter = null,
         array $srcsetFilters = [],
         array $sources = [],
         string $alt = '',
         string $class = ''
     ): string {
-        $srcsetHtml      = $this->getUmanitImageSrcset($path, $srcsetFilters);
-        $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
-        $srcPath         = $this->cacheManager->getBrowserPath($path, $srcFilter);
-        $sourcesHtml     = [];
+        $sourcesHtml = [];
 
         foreach ($sources as $sourcePath => $sourceDataset) {
             $sourceFilters = $sourceDataset['filters'] ?? $sourceDataset;
             $media         = '';
-            $sizes = '';
+            $sizes         = '';
             $srcSet        = $this->getUmanitImageSrcset($sourcePath, $sourceFilters);
 
             if (isset($sourceDataset['media'])) {
@@ -121,18 +152,13 @@ HTML;
 HTML;
         }
 
-        $sourcesHtml = implode("\n", $sourcesHtml);
+        $sourcesMarkup = implode("\n", $sourcesHtml);
+        $imgMarkup     = $this->getImgMarkup($path, $srcFilter, $placeholderFilter, $srcsetFilters, $alt, $class);
 
         return <<<HTML
 <picture>
-  $sourcesHtml
-  <img
-    alt="$alt"
-    class="lazy lazy-placeholder $class"
-    src="$placeholderPath"
-    data-src="$srcPath"
-    data-srcset="$srcsetHtml"
-  >
+  $sourcesMarkup
+  $imgMarkup
 </picture>
 HTML;
 
@@ -168,5 +194,84 @@ HTML;
         }
 
         return implode(', ', $srcset);
+    }
+
+    /**
+     * @param string      $path
+     * @param string      $srcFilter
+     * @param string|null $placeholderFilter
+     * @param array       $srcsetFilters
+     * @param string      $alt
+     * @param string      $class
+     * @param string|null $sizes
+     *
+     * @return string
+     */
+    private function getImgMarkup(
+        string $path,
+        string $srcFilter,
+        string $placeholderFilter = null,
+        array $srcsetFilters = [],
+        string $alt = '',
+        string $class = '',
+        string $sizes = null
+    ): string {
+        if (!$this->lazyLoadEnabled) {
+            return $this->getNonLazyLoadImgMarkup($path, $srcFilter, $srcsetFilters, $alt, $class, $sizes);
+        }
+
+        $srcsetHtml      = !empty($srcsetFilters) ?
+            sprintf('srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
+            '';
+        $srcPath         = $this->cacheManager->getBrowserPath($path, $srcFilter);
+        $sizesHtml       = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
+        $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
+
+        return <<<HTML
+  <img
+    alt="$alt"
+    class="{$this->lazyLoadClassSelector} {$this->lazyLoadPlaceholderClassSelector} $class"
+    src="$placeholderPath"
+    data-src="$srcPath"
+    $srcsetHtml
+    $sizesHtml
+  >
+HTML;
+    }
+
+    /**
+     * @param string      $path
+     * @param string      $srcFilter
+     * @param array       $srcsetFilters
+     * @param string      $alt
+     * @param string      $class
+     * @param string|null $sizes
+     *
+     * @return string
+     */
+    private function getNonLazyLoadImgMarkup(
+        string $path,
+        string $srcFilter,
+        array $srcsetFilters = [],
+        string $alt = '',
+        string $class = '',
+        string $sizes = null
+    ): string {
+        $classHtml  = '' !== $class ? sprintf('class="%s"', $class) : '';
+        $srcsetHtml = !empty($srcsetFilters) ?
+            sprintf('srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
+            '';
+        $srcPath    = $this->cacheManager->getBrowserPath($path, $srcFilter);
+        $sizesHtml  = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
+
+        return <<<HTML
+  <img
+    alt="$alt"
+    $classHtml
+    src="$srcPath"
+    $srcsetHtml
+    $sizesHtml
+  >
+HTML;
     }
 }

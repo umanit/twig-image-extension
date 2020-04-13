@@ -21,5 +21,15 @@ class UmanitTwigImageExtension extends Extension
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yaml');
+
+        $configuration = new Configuration();
+        $config        = $this->processConfiguration($configuration, $configs);
+        $definition    = $container->getDefinition('umanit_twig_image.runtime');
+
+        $definition->addMethodCall('setLazyLoadConfiguration', [
+            $config['lazy_load']['enabled'],
+            $config['lazy_load']['class_selector'],
+            $config['lazy_load']['placeholder_class_selector'],
+        ]);
     }
 }
