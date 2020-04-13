@@ -172,28 +172,13 @@ HTML;
      */
     public function getUmanitImageSrcset(string $path, array $filters): string
     {
-        $srcset = [];
-
-        foreach ($filters as $filter) {
-            $filterConfig = $this->filters[$filter];
-            $width        = null;
-
-            if (isset($filterConfig['filters']['relative_resize']['widen'])) {
-                $width = $filterConfig['filters']['relative_resize']['widen'];
-            } elseif (isset($filterConfig['filters']['thumbnail']['size'])) {
-                $width = current($filterConfig['filters']['thumbnail']['size']);
-            }
-
-            if (null === $width) {
-                throw new \LogicException(
-                    sprintf('Can not determine the width to use for the filter "%s"', $filter)
-                );
-            }
-
-            $srcset[] = sprintf('%s %uw', $this->cacheManager->getBrowserPath($path, $filter), $width);
-        }
-
-        return implode(', ', $srcset);
+        return implode(', ', array_map(function ($filter) use ($path) {
+            return sprintf(
+                '%s %uw',
+                $this->cacheManager->getBrowserPath($path, $filter),
+                $this->getWidthFromFilter($filter)
+            );
+        }, $filters));
     }
 
     /**
@@ -273,5 +258,30 @@ HTML;
     $sizesHtml
   >
 HTML;
+    }
+
+    /**
+     * @param string $filter
+     *
+     * @return int
+     */
+    private function getWidthFromFilter(string $filter): int
+    {
+        $filterConfig = $this->filters[$filter];
+        $width        = null;
+
+        if (isset($filterConfig['filters']['relative_resize']['widen'])) {
+            $width = $filterConfig['filters']['relative_resize']['widen'];
+        } elseif (isset($filterConfig['filters']['thumbnail']['size'])) {
+            $width = current($filterConfig['filters']['thumbnail']['size']);
+        }
+
+        if (null === $width) {
+            throw new \LogicException(
+                sprintf('Can not determine the width to use for the filter "%s"', $filter)
+            );
+        }
+
+        return (int) $width;
     }
 }
