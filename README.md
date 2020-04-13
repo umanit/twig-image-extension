@@ -5,6 +5,9 @@ This Twig extension facilitate the integration of responsive images' markup in T
 It use [LiipImagineBundle](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/index.html) and his filters to
 generate HTML markup with all you need to handle responsive images.
 
+It also provide a javascript module to automatically instantiate [yall.js](https://github.com/malchata/yall.js/) on
+rendered images.
+
 ## Installation
 
 Use the package manager [composer](https://getcomposer.org/) to install the extension.
@@ -25,6 +28,13 @@ return [
 ];
 ```
 
+(Optionnal) Install bundle assets if you want to use the javascript module for
+[yall.js](https://github.com/malchata/yall.js/):
+
+```bash
+bin/console assets:install --symlink`
+```
+
 ## Usage
 
 The following Twig functions are available in your templates.
@@ -32,14 +42,17 @@ The following Twig functions are available in your templates.
 1. [umanit_image_figure](#umanit_image_figure)
 1. [umanit_image_picture](#umanit_image_picture)
 1. [umanit_image_srcset](#umanit_image_srcset)
+1. [(Optional) Javascript module to instantiate yall.js](#-optional--javascript-module-to-instantiate-yalljs)
 
 When a [LiipImagine filter](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/filters.html#built-in-filters) is
 used, the extension will read his configuration and automatically takes the right width to apply in the markup.
 
 List of supported filters:
 
- * relative_resize: Use the `widen` value
- * thumbnail: Use the first value of `size`
+ * [relative_resize](https://symfony.com/doc/current/bundles/LiipImagineBundle/filters/sizing.html#relative-resize):
+ Use the `widen` value
+ * [thumbnail](https://symfony.com/doc/current/bundles/LiipImagineBundle/filters/sizing.html#thumbnails): Use the first
+ value of `size`
 
 ### umanit_image_figure
 
@@ -184,6 +197,23 @@ Generates the content of a `srcset` attribute if you wan to use it in your own m
   https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w
   ```
 </details>
+
+### (Optional) Javascript module to instantiate yall.js
+
+If you want to use [yall.js](https://github.com/malchata/yall.js/) to manage the lazy load of your images, the bundle
+provides a javascript module that can be called in your application.
+
+[yall.js](https://github.com/malchata/yall.js/) needs to be installed manually: `yarn add yall-js`
+
+Then you need to import the module and instantiate it by passing the yall library.
+
+```js
+import yall from 'yall-js';
+import umanitImageLazyLoad from '../../public/bundles/umanittwigimage/js/umanit-image-lazy-loading';
+
+umanitImageLazyLoad(yall);
+
+```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
