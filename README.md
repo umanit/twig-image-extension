@@ -102,17 +102,20 @@ always add to facilitate the integration with [yall.js](https://github.com/malch
 
 ### umanit_image_picture
 
-Generates a `picture` tag with an `img` inside and X `source`. Each `source` can have a `media` attribute if needed.
+Generates a `picture` tag with an `img` inside and X `source`. Each `source` can have a `media` and `sizes` attribute
+if needed.
 
 #### Parameters
 
-| **Name**  | **Explanation**                                                                                                                                                                                                                                                    |
-|-----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| imgPath   | Path to the image, used to generated the browser path with LiipImagine                                                                                                                                                                                             |
-| imgFilter | Name of the LiipImagine filter used to generate the path for `src`                                                                                                                                                                                                 |
-| sources   | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` attribute on the source, an array with `filters` and `media` key. |
-| alt       | The text to put in the `alt` attribute of the `img`                                                                                                                                                                                                                |
-| class     | Classes to add on the `img`                                                                                                                                                                                                                                        |
+| **Name**          | **Explanation**                                                                                                                                                                                                                                                                              |
+|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| path              | Path to the image, used to generated the browser path with LiipImagine                                                                                                                                                                                                                       |
+| placeholderFilter | Name of the LiipImagine filter used to generate the path for `src`                                                                                                                                                                                                                           |
+| srcFilter         | Name of the LiipImagine filter used to generate the path for `data-src`                                                                                                                                                                                                                      |
+| srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`                                                                                                                                                                                                                             |
+| sources           | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. |
+| alt               | The text to put in the `alt` attribute of the `img`                                                                                                                                                                                                                                          |
+| class             | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
 
 #### Example
 
@@ -125,9 +128,10 @@ Generates a `picture` tag with an `img` inside and X `source`. Each `source` can
       'tiny_thumbnail',
       {
         (image.path): {
-        'media': '(min-width: 768px)',
-        'filters': ['thumbnail', 'large_thumbnail']
-      },
+          'media': '(min-width: 768px)',
+          'sizes': '(min-width: 1400px) 25vw, 50vw',
+          'filters': ['thumbnail', 'large_thumbnail']
+        },
         (image2.path): ['thumbnail', 'large_thumbnail']
       },
       'alt img',
@@ -139,7 +143,7 @@ Generates a `picture` tag with an `img` inside and X `source`. Each `source` can
 
   ```html
   <picture>
-    <source media="(min-width: 768px)" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w">
+    <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w">
     <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w">
     <img
       class="img img-fluid"

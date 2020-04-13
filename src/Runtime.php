@@ -59,16 +59,16 @@ class Runtime
     class="lazy lazy-placeholder $class"
     src="$placeholderPath"
     data-src="$srcPath"
-    sizes="$sizes"
     data-srcset="$srcsetHtml"
+    sizes="$sizes"
   >
   <noscript>
     <img
-      class="$class"
       alt="$alt"
+      class="$class"
       src="$srcPath"
-      sizes="$sizes"
       srcset="$srcsetHtml"
+      sizes="$sizes"
     >
   </noscript>
 </figure>
@@ -76,8 +76,10 @@ HTML;
     }
 
     /**
-     * @param string $imgPath
-     * @param string $imgFilter
+     * @param string $path
+     * @param string $placeholderFilter
+     * @param string $srcFilter
+     * @param array  $srcsetFilters
      * @param array  $sources
      * @param string $alt
      * @param string $class
@@ -85,14 +87,18 @@ HTML;
      * @return string
      */
     public function getUmanitImagePicture(
-        string $imgPath,
-        string $imgFilter,
+        string $path,
+        string $placeholderFilter,
+        string $srcFilter,
+        array $srcsetFilters = [],
         array $sources = [],
         string $alt = '',
         string $class = ''
     ): string {
-        $src         = $this->cacheManager->getBrowserPath($imgPath, $imgFilter);
-        $sourcesHtml = [];
+        $srcsetHtml      = $this->getUmanitImageSrcset($path, $srcsetFilters);
+        $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
+        $srcPath         = $this->cacheManager->getBrowserPath($path, $srcFilter);
+        $sourcesHtml     = [];
 
         foreach ($sources as $sourcePath => $sourceDataset) {
             $sourceFilters = $sourceDataset['filters'] ?? $sourceDataset;
@@ -103,8 +109,12 @@ HTML;
                 $media = sprintf('media="%s"', $sourceDataset['media']);
             }
 
+            if (isset($sourceDataset['sizes'])) {
+                $media = sprintf('sizes="%s"', $sourceDataset['sizes']);
+            }
+
             $sourcesHtml[] = <<<HTML
-<source $media srcset="$srcSet">
+<source $media data-srcset="$srcSet">
 HTML;
         }
 
@@ -114,9 +124,11 @@ HTML;
 <picture>
   $sourcesHtml
   <img
-    class="$class"
-    src="$src"
     alt="$alt"
+    class="lazy lazy-placeholder $class"
+    src="$placeholderPath"
+    data-src="$srcPath"
+    data-srcset="$srcsetHtml"
   >
 </picture>
 HTML;
