@@ -136,8 +136,7 @@ add to facilitate the integration with [yall.js](https://github.com/malchata/yal
 
 ### umanit_image_figure
 
-Generates a `figure` tag with an `img` inside. The `lazy` and `lazy-placeholder` classes are add to facilitate the
-integration with [yall.js](https://github.com/malchata/yall.js/) for example.
+Generates a `figure` tag with an `img` inside.
 
 #### Parameters
 
@@ -184,7 +183,8 @@ integration with [yall.js](https://github.com/malchata/yall.js/) for example.
 ### umanit_image_picture_lazy_load
 
 Generates a `picture` tag with an `img` inside and X `source`. Each `source` can have a `media` and `sizes` attribute
-if needed.
+if needed.  The `lazy` and `lazy-placeholder` classes are add to facilitate the  integration with
+[yall.js](https://github.com/malchata/yall.js/) for example.
 
 #### Parameters
 
