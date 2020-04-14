@@ -3,7 +3,7 @@
     "description": "An extension to facilitate the integration of responsive images' markup in Twig templates.",
     "type": "library",
     "license": "MIT",
-    "keywords": ["twig", "extension", "responsive", "image"],
+    "keywords": ["twig", "extension", "responsive", "image", "lazy load"],
     "authors": [
         {
             "name": "Vivien",
