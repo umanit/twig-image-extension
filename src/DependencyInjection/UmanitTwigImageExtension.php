@@ -27,7 +27,6 @@ class UmanitTwigImageExtension extends Extension
         $definition    = $container->getDefinition('umanit_twig_image.runtime');
 
         $definition->addMethodCall('setLazyLoadConfiguration', [
-            $config['lazy_load']['enabled'],
             $config['lazy_load']['class_selector'],
             $config['lazy_load']['placeholder_class_selector'],
         ]);

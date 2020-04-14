@@ -23,7 +23,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder->getRootNode()
             ->children()
                 ->arrayNode('lazy_load')
-                    ->canBeDisabled()
+                    ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('class_selector')
                             ->defaultValue('lazy')

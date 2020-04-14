@@ -37,17 +37,13 @@ bin/console assets:install --symlink
 
 ## Configuration
 
-By default, the HTML markup is rendered with ability to use lazy loading on images. It's possible to disable this
-functionality or to customize the classes used.
+Some functions render HTML markup with ability to use lazy loading on images. It's possible to customize the classes 
+used.
 
 You just need to create a file `config/packages/umanit_twig_image.yaml`:
 
 ```yaml
 umanit_twig_image:
-    # If you want to disable the markup relative to lazy loading
-    enabled: false
-
-    # If you want to customize classes used to render the markup relative to lazy loading
     class_selector: lazy
     placeholder_class_selector: lazy-placeholder
 ```
@@ -59,7 +55,9 @@ umanit_twig_image:
 
 The following Twig functions are available in your templates.
 
+1. [umanit_image_figure_lazy_load](#umanit_image_figure_lazy_load)
 1. [umanit_image_figure](#umanit_image_figure)
+1. [umanit_image_picture_lazy_load](#umanit_image_picture_lazy_load)
 1. [umanit_image_picture](#umanit_image_picture)
 1. [umanit_image_srcset](#umanit_image_srcset)
 1. [(Optional) Javascript module to instantiate yall.js](#optional-javascript-module-to-instantiate-yalljs)
@@ -67,8 +65,8 @@ The following Twig functions are available in your templates.
 When a [LiipImagine filter](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/filters.html#built-in-filters) is
 used, the extension will read his configuration and automatically takes the right width to apply in the markup.
 
-When the markup relative to lazy loading is active, `lazy` and `lazy-placeholder` classes are used but can be
-customized as explained in the [Configuration](#configuration) part.
+When the used function is for lazy load, `lazy` and `lazy-placeholder` classes are used but can be customized as
+explained in the [Configuration](#configuration) part.
 
 List of supported filters:
 
@@ -77,22 +75,22 @@ List of supported filters:
  * [thumbnail](https://symfony.com/doc/current/bundles/LiipImagineBundle/filters/sizing.html#thumbnails): Use the first
  value of `size`
 
-### umanit_image_figure
+### umanit_image_figure_lazy_load
 
 Generates a `figure` tag with an `img` inside and his `noscript` version. The `lazy` and `lazy-placeholder` classes are
-always add to facilitate the integration with [yall.js](https://github.com/malchata/yall.js/) for example.
+add to facilitate the integration with [yall.js](https://github.com/malchata/yall.js/) for example.
 
 #### Parameters
 
-| **Name**          | **Explanation**                                                                                                      |
-|-------------------|----------------------------------------------------------------------------------------------------------------------|
-| path              | Path to the image, used to generated the browser path with LiipImagine                                               |
-| srcFilter         | Name of the LiipImagine filter used to generate the path for `data-src`, or `src` if lazy loading markup is disabled |
-| placeholderFilter | Name of the LiipImagine filter used to generate the path for `src`. Unused if lazy loading markup is disabled        |
-| srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`, or `srcset` if lazy loading markup is disabled     |
-| alt               | The text to put in the `alt` attribute of the `img`                                                                  |
-| class             | Classes to add on the `img`                                                                                          |
-| sizes             | Value of the `sizes` attribute (`100vw` if not defined)                                                              |
+| **Name**          | **Explanation**                                                         |
+|-------------------|-------------------------------------------------------------------------|
+| path              | Path to the image, used to generated the browser path with LiipImagine  |
+| srcFilter         | Name of the LiipImagine filter used to generate the path for `data-src` |
+| placeholderFilter | Name of the LiipImagine filter used to generate the path for `src`      |
+| srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`        |
+| alt               | The text to put in the `alt` attribute of the `img`                     |
+| class             | Classes to add on the `img`                                             |
+| sizes             | Value of the `sizes` attribute (`100vw` if not defined)                 |
 
 #### Example
 
@@ -100,7 +98,7 @@ always add to facilitate the integration with [yall.js](https://github.com/malch
   <summary>Click to show</summary>
 
   ```twig
-      umanit_image_figure(
+      umanit_image_figure_lazy_load(
         image.path,
         'tiny_thumbnail',
         'small_thumbnail',
@@ -111,7 +109,7 @@ always add to facilitate the integration with [yall.js](https://github.com/malch
       )
   ```
 
-  HTML generated **with** lazy loading markup
+  HTML generated
 
   ```html
   <figure>
@@ -134,8 +132,41 @@ always add to facilitate the integration with [yall.js](https://github.com/malch
     </noscript>
   </figure>
   ```
+</details>
 
-  HTML generated **without** lazy loading markup
+### umanit_image_figure
+
+Generates a `figure` tag with an `img` inside. The `lazy` and `lazy-placeholder` classes are add to facilitate the
+integration with [yall.js](https://github.com/malchata/yall.js/) for example.
+
+#### Parameters
+
+| **Name**          | **Explanation**                                                        |
+|-------------------|------------------------------------------------------------------------|
+| path              | Path to the image, used to generated the browser path with LiipImagine |
+| srcFilter         | Name of the LiipImagine filter used to generate the path for `src`     |
+| srcsetFilters     | A list of LiipImagine filters used to generate the `srcset`            |
+| alt               | The text to put in the `alt` attribute of the `img`                    |
+| class             | Classes to add on the `img`                                            |
+| sizes             | Value of the `sizes` attribute (`100vw` if not defined)                |
+
+#### Example
+
+<details>
+  <summary>Click to show</summary>
+
+  ```twig
+      umanit_image_figure(
+        image.path,
+        'small_thumbnail',
+        ['thumbnail', 'large_thumbnail'],
+        'image alt',
+        'img img--cover img--zoom',
+        '(min-width: 768px) 33.3vw, 100vw'
+      )
+  ```
+
+  HTML generated
 
   ```html
   <figure>
@@ -150,7 +181,7 @@ always add to facilitate the integration with [yall.js](https://github.com/malch
   ```
 </details>
 
-### umanit_image_picture
+### umanit_image_picture_lazy_load
 
 Generates a `picture` tag with an `img` inside and X `source`. Each `source` can have a `media` and `sizes` attribute
 if needed.
@@ -160,9 +191,9 @@ if needed.
 | **Name**          | **Explanation**                                                                                                                                                                                                                                                                              |
 |-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | path              | Path to the image, used to generated the browser path with LiipImagine                                                                                                                                                                                                                       |
-| srcFilter         | Name of the LiipImagine filter used to generate the path for `data-src`, or `src` if lazy loading markup is disabled                                                                                                                                                                         |
-| placeholderFilter | Name of the LiipImagine filter used to generate the path for `src`. Unused if lazy loading markup is disabled                                                                                                                                                                                |
-| srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`, or `srcset` if lazy loading markup is disabled                                                                                                                                                                             |
+| srcFilter         | Name of the LiipImagine filter used to generate the path for `data-src`                                                                                                                                                                                                                      |
+| placeholderFilter | Name of the LiipImagine filter used to generate the path for `src`                                                                                                                                                                                                                           |
+| srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`                                                                                                                                                                                                                             |
 | sources           | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. |
 | alt               | The text to put in the `alt` attribute of the `img`                                                                                                                                                                                                                                          |
 | class             | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
@@ -173,7 +204,7 @@ if needed.
   <summary>Click to show</summary>
 
   ```twig
-    umanit_image_picture(
+    umanit_image_picture_lazy_load(
       image.path,
       'tiny_thumbnail',
       'small_thumbnail',
@@ -191,7 +222,7 @@ if needed.
     )
   ```
 
-  HTML generated **with** lazy loading markup
+  HTML generated
 
   ```html
   <picture>
@@ -206,8 +237,49 @@ if needed.
     >
   </picture>
   ```
+</details>
 
-  HTML generated **without** lazy loading markup
+
+### umanit_image_picture
+
+Generates a `picture` tag with an `img` inside and X `source`. Each `source` can have a `media` and `sizes` attribute
+if needed.
+
+#### Parameters
+
+| **Name**          | **Explanation**                                                                                                                                                                                                                                                                              |
+|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| path              | Path to the image, used to generated the browser path with LiipImagine                                                                                                                                                                                                                       |
+| srcFilter         | Name of the LiipImagine filter used to generate the path for `src`                                                                                                                                                                                                                           |
+| srcsetFilters     | A list of LiipImagine filters used to generate the `srcset`                                                                                                                                                                                                                                  |
+| sources           | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. |
+| alt               | The text to put in the `alt` attribute of the `img`                                                                                                                                                                                                                                          |
+| class             | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
+
+#### Example
+
+<details>
+  <summary>Click to show</summary>
+
+  ```twig
+    umanit_image_picture(
+      image.path,
+      'small_thumbnail',
+      ['thumbnail', 'large_thumbnail'],
+      {
+        (image.path): {
+          'media': '(min-width: 768px)',
+          'sizes': '(min-width: 1400px) 25vw, 50vw',
+          'filters': ['thumbnail', 'large_thumbnail']
+        },
+        (image2.path): ['thumbnail', 'large_thumbnail']
+      },
+      'alt img',
+      'img img-fluid'
+    )
+  ```
+
+  HTML generated
 
   ```html
   <picture>
