@@ -91,6 +91,7 @@ add to facilitate the integration with [yall.js](https://github.com/malchata/yal
 | alt               | The text to put in the `alt` attribute of the `img`                     |
 | class             | Classes to add on the `img`                                             |
 | sizes             | Value of the `sizes` attribute (`100vw` if not defined)                 |
+| classFigure       | Classes to add on the `figure`                                          |
 
 #### Example
 
@@ -105,14 +106,15 @@ add to facilitate the integration with [yall.js](https://github.com/malchata/yal
         ['thumbnail', 'large_thumbnail'],
         'image alt',
         'img img--cover img--zoom',
-        '(min-width: 768px) 33.3vw, 100vw'
+        '(min-width: 768px) 33.3vw, 100vw',
+        'class-figure',
       )
   ```
 
   HTML generated
 
   ```html
-  <figure>
+  <figure class="class-figure">
     <img
       alt="image alt"
       class="lazy lazy-placeholder img img--cover img--zoom"
@@ -148,6 +150,7 @@ Generates a `figure` tag with an `img` inside.
 | alt               | The text to put in the `alt` attribute of the `img`                    |
 | class             | Classes to add on the `img`                                            |
 | sizes             | Value of the `sizes` attribute (`100vw` if not defined)                |
+| classFigure       | Classes to add on the `figure`                                         |
 
 #### Example
 
@@ -161,14 +164,15 @@ Generates a `figure` tag with an `img` inside.
         ['thumbnail', 'large_thumbnail'],
         'image alt',
         'img img--cover img--zoom',
-        '(min-width: 768px) 33.3vw, 100vw'
+        '(min-width: 768px) 33.3vw, 100vw',
+        'class-figure',
       )
   ```
 
   HTML generated
 
   ```html
-  <figure>
+  <figure class="class-figure">
     <img
       alt="image alt"
       class="lazy lazy-placeholder img img--cover img--zoom"
