@@ -47,13 +47,13 @@ class Runtime
     }
 
     /**
-     * @param string      $path
-     * @param string      $srcFilter
-     * @param array       $srcsetFilters
-     * @param string      $alt
-     * @param string      $imgClass
-     * @param string      $sizes
-     * @param string      $figureClass
+     * @param string $path
+     * @param string $srcFilter
+     * @param array  $srcsetFilters
+     * @param string $alt
+     * @param string $imgClass
+     * @param string $sizes
+     * @param string $figureClass
      *
      * @return string
      */
@@ -91,7 +91,7 @@ HTML;
      * @param string      $alt
      * @param string      $imgClass
      * @param string      $sizes
-     * @param string $figureClass
+     * @param string      $figureClass
      *
      * @return string
      */
