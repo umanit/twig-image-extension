@@ -226,7 +226,7 @@ HTML;
         string $sizes = null
     ): string {
         $srcsetHtml      = !empty($srcsetFilters) ?
-            sprintf('srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
+            sprintf('data-srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
             '';
         $srcPath         = $this->cacheManager->getBrowserPath($path, $srcFilter);
         $sizesHtml       = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
