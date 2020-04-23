@@ -89,9 +89,9 @@ add to facilitate the integration with [yall.js](https://github.com/malchata/yal
 | placeholderFilter | Name of the LiipImagine filter used to generate the path for `src`      |
 | srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`        |
 | alt               | The text to put in the `alt` attribute of the `img`                     |
-| class             | Classes to add on the `img`                                             |
+| imgClass          | Classes to add on the `img`                                             |
 | sizes             | Value of the `sizes` attribute (`100vw` if not defined)                 |
-| classFigure       | Classes to add on the `figure`                                          |
+| figureClass       | Classes to add on the `figure`                                          |
 
 #### Example
 
@@ -148,9 +148,9 @@ Generates a `figure` tag with an `img` inside.
 | srcFilter         | Name of the LiipImagine filter used to generate the path for `src`     |
 | srcsetFilters     | A list of LiipImagine filters used to generate the `srcset`            |
 | alt               | The text to put in the `alt` attribute of the `img`                    |
-| class             | Classes to add on the `img`                                            |
+| imgClass          | Classes to add on the `img`                                            |
 | sizes             | Value of the `sizes` attribute (`100vw` if not defined)                |
-| classFigure       | Classes to add on the `figure`                                         |
+| figureClass       | Classes to add on the `figure`                                         |
 
 #### Example
 
@@ -200,7 +200,7 @@ if needed.  The `lazy` and `lazy-placeholder` classes are add to facilitate the 
 | srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`                                                                                                                                                                                                                             |
 | sources           | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. |
 | alt               | The text to put in the `alt` attribute of the `img`                                                                                                                                                                                                                                          |
-| class             | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
+| imgClass          | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
 
 #### Example
 
@@ -258,7 +258,7 @@ if needed.
 | srcsetFilters     | A list of LiipImagine filters used to generate the `srcset`                                                                                                                                                                                                                                  |
 | sources           | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. |
 | alt               | The text to put in the `alt` attribute of the `img`                                                                                                                                                                                                                                          |
-| class             | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
+| imgClass          | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
 
 #### Example
 
