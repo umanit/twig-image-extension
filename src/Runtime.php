@@ -51,8 +51,9 @@ class Runtime
      * @param string $srcFilter
      * @param array  $srcsetFilters
      * @param string $alt
-     * @param string $class
+     * @param string $imgClass
      * @param string $sizes
+     * @param string $figureClass
      *
      * @return string
      */
@@ -61,20 +62,22 @@ class Runtime
         string $srcFilter,
         array $srcsetFilters = [],
         string $alt = '',
-        string $class = '',
-        string $sizes = '100vw'
+        string $imgClass = '',
+        string $sizes = '100vw',
+        string $figureClass = ''
     ): string {
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
             $srcFilter,
             $srcsetFilters,
             $alt,
-            $class,
+            $imgClass,
             $sizes
         );
+        $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
 
         return <<<HTML
-<figure>
+<figure $classFigureHtml>
   $nonLazyLoadImgMarkup
 </figure>
 HTML;
@@ -86,8 +89,9 @@ HTML;
      * @param string|null $placeholderFilter
      * @param array       $srcsetFilters
      * @param string      $alt
-     * @param string      $class
+     * @param string      $imgClass
      * @param string      $sizes
+     * @param string      $figureClass
      *
      * @return string
      */
@@ -97,15 +101,16 @@ HTML;
         string $placeholderFilter = null,
         array $srcsetFilters = [],
         string $alt = '',
-        string $class = '',
-        string $sizes = '100vw'
+        string $imgClass = '',
+        string $sizes = '100vw',
+        string $figureClass = ''
     ): string {
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
             $srcFilter,
             $srcsetFilters,
             $alt,
-            $class,
+            $imgClass,
             $sizes
         );
         $imgMarkup            = $this->getImgMarkup(
@@ -114,12 +119,13 @@ HTML;
             $placeholderFilter,
             $srcsetFilters,
             $alt,
-            $class,
+            $imgClass,
             $sizes
         );
+        $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
 
         return <<<HTML
-<figure>
+<figure $classFigureHtml>
   $imgMarkup
   <noscript>
     $nonLazyLoadImgMarkup
@@ -134,7 +140,7 @@ HTML;
      * @param array  $srcsetFilters
      * @param array  $sources
      * @param string $alt
-     * @param string $class
+     * @param string $imgClass
      *
      * @return string
      */
@@ -144,10 +150,10 @@ HTML;
         array $srcsetFilters = [],
         array $sources = [],
         string $alt = '',
-        string $class = ''
+        string $imgClass = ''
     ): string {
         $sourcesMarkup = $this->getSourcesMarkup($sources, false);
-        $imgMarkup     = $this->getNonLazyLoadImgMarkup($path, $srcFilter, $srcsetFilters, $alt, $class);
+        $imgMarkup     = $this->getNonLazyLoadImgMarkup($path, $srcFilter, $srcsetFilters, $alt, $imgClass);
 
         return <<<HTML
 <picture>
@@ -164,7 +170,7 @@ HTML;
      * @param array       $srcsetFilters
      * @param array       $sources
      * @param string      $alt
-     * @param string      $class
+     * @param string      $imgClass
      *
      * @return string
      */
@@ -175,10 +181,10 @@ HTML;
         array $srcsetFilters = [],
         array $sources = [],
         string $alt = '',
-        string $class = ''
+        string $imgClass = ''
     ): string {
         $sourcesMarkup = $this->getSourcesMarkup($sources, true);
-        $imgMarkup     = $this->getImgMarkup($path, $srcFilter, $placeholderFilter, $srcsetFilters, $alt, $class);
+        $imgMarkup     = $this->getImgMarkup($path, $srcFilter, $placeholderFilter, $srcsetFilters, $alt, $imgClass);
 
         return <<<HTML
 <picture>
@@ -211,7 +217,7 @@ HTML;
      * @param string|null $placeholderFilter
      * @param array       $srcsetFilters
      * @param string      $alt
-     * @param string      $class
+     * @param string      $imgClass
      * @param string|null $sizes
      *
      * @return string
@@ -222,7 +228,7 @@ HTML;
         string $placeholderFilter = null,
         array $srcsetFilters = [],
         string $alt = '',
-        string $class = '',
+        string $imgClass = '',
         string $sizes = null
     ): string {
         $srcsetHtml      = !empty($srcsetFilters) ?
@@ -235,7 +241,7 @@ HTML;
         return <<<HTML
   <img
     alt="$alt"
-    class="{$this->lazyLoadClassSelector} {$this->lazyLoadPlaceholderClassSelector} $class"
+    class="{$this->lazyLoadClassSelector} {$this->lazyLoadPlaceholderClassSelector} $imgClass"
     src="$placeholderPath"
     data-src="$srcPath"
     $srcsetHtml
@@ -249,7 +255,7 @@ HTML;
      * @param string      $srcFilter
      * @param array       $srcsetFilters
      * @param string      $alt
-     * @param string      $class
+     * @param string      $imgClass
      * @param string|null $sizes
      *
      * @return string
@@ -259,10 +265,10 @@ HTML;
         string $srcFilter,
         array $srcsetFilters = [],
         string $alt = '',
-        string $class = '',
+        string $imgClass = '',
         string $sizes = null
     ): string {
-        $classHtml  = '' !== $class ? sprintf('class="%s"', $class) : '';
+        $classHtml  = '' !== $imgClass ? sprintf('class="%s"', $imgClass) : '';
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
             '';
