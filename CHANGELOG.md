@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Add `['is_safe' => ['html']]` on functions
+- Use `data-srcset` on lazy load functions
 
 ### BC Break
 - Rename `class` parameter to `imgClass` on all functions
@@ -19,5 +20,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 1.0.0 - 2020-04-14
 First release 🎉
 
-[Unreleased]: https://github.com/umanit/twig-image-extension/compare/v1.0.1...master
-[1.0.1]: https://github.com/umanit/twig-image-extension/compare/v1.0.0...v1.0.1
+[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.0.1...master
+[1.0.1]: https://github.com/umanit/twig-image-extension/compare/1.0.0...1.0.1
