@@ -24,6 +24,9 @@ class Runtime
     /** @var string */
     private $lazyLoadPlaceholderClassSelector;
 
+    /** @var string */
+    private $lazyBlurClassSelector;
+
     /**
      * AppExtension constructor.
      *
@@ -39,11 +42,13 @@ class Runtime
     /**
      * @param string $classSelector
      * @param string $placeholderClassSelector
+     * @param string $lazyBlurClassSelector
      */
-    public function setLazyLoadConfiguration(string $classSelector, string $placeholderClassSelector): void
+    public function setLazyLoadConfiguration(string $classSelector, string $placeholderClassSelector, string $lazyBlurClassSelector): void
     {
         $this->lazyLoadClassSelector            = $classSelector;
         $this->lazyLoadPlaceholderClassSelector = $placeholderClassSelector;
+        $this->lazyBlurClassSelector            = $lazyBlurClassSelector;
     }
 
     /**
@@ -241,7 +246,7 @@ HTML;
         return <<<HTML
   <img
     alt="$alt"
-    class="{$this->lazyLoadClassSelector} {$this->lazyLoadPlaceholderClassSelector} $imgClass"
+    class="{$this->lazyLoadClassSelector} {$this->lazyLoadPlaceholderClassSelector} {$this->lazyBlurClassSelector} $imgClass"
     src="$placeholderPath"
     data-src="$srcPath"
     $srcsetHtml

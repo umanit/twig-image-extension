@@ -1,0 +1,14 @@
+/* Hide .lazy elements if JavaScript is off */
+.no-js .lazy {
+  display: none;
+}
+
+/* Filter on lazy load images */
+picture img.lazy-placeholder, img.lazy-placeholder {
+  filter: blur(20px);
+}
+
+/* Filter transition on lazy load */
+picture img.lazy-blur, img.lazy-blur {
+  transition: filter 0.5s;
+}

@@ -46,10 +46,11 @@ You just need to create a file `config/packages/umanit_twig_image.yaml`:
 umanit_twig_image:
     class_selector: lazy
     placeholder_class_selector: lazy-placeholder
+    blur_class_selector: lazy-blur
 ```
 
-| ⚠ | If you customize classes, you can not use anymore the javascript module which relies on them |
-|---|----------------------------------------------------------------------------------------------|
+| ⚠ | If you customize classes, you can not use anymore the javascript module and css which relies on them |
+|---|------------------------------------------------------------------------------------------------------|
 
 ## Usage
 
@@ -77,8 +78,9 @@ List of supported filters:
 
 ### umanit_image_figure_lazy_load
 
-Generates a `figure` tag with an `img` inside and his `noscript` version. The `lazy` and `lazy-placeholder` classes are
-add to facilitate the integration with [yall.js](https://github.com/malchata/yall.js/) for example.
+Generates a `figure` tag with an `img` inside and his `noscript` version. The `lazy`,
+`lazy-placeholder` and `lazy-blur` classes are add to facilitate the integration with 
+[yall.js](https://github.com/malchata/yall.js/) for example.
 
 #### Parameters
 
@@ -117,7 +119,7 @@ add to facilitate the integration with [yall.js](https://github.com/malchata/yal
   <figure class="class-figure">
     <img
       alt="image alt"
-      class="lazy lazy-placeholder img img--cover img--zoom"
+      class="lazy lazy-placeholder lazy-blur img img--cover img--zoom"
       src="https://domain.tld/media/cache/tiny_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
       data-src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
       sizes="(min-width: 768px) 33.3vw, 100vw"
@@ -175,7 +177,7 @@ Generates a `figure` tag with an `img` inside.
   <figure class="class-figure">
     <img
       alt="image alt"
-      class="lazy lazy-placeholder img img--cover img--zoom"
+      class="lazy lazy-placeholder lazy-blur img img--cover img--zoom"
       src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
       sizes="(min-width: 768px) 33.3vw, 100vw"
       srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
@@ -342,6 +344,35 @@ import umanitImageLazyLoad from '../../public/bundles/umanittwigimage/js/umanit-
 umanitImageLazyLoad(yall);
 
 ```
+
+### (Optional) Import css files for blur effect on yall.js lazy images
+
+You can import the css file for adding a blur effect on lazy images 
+
+```twig
+<link rel="stylesheet" href="{{ asset('bundles/umanittwigimage/css/umanit-image-lazy-loading.css') }}">
+```
+
+Example in webpack
+```js
+import '../../public/bundles/umanittwigimage/css/umanit-image-lazy-loading.css';
+```
+
+⚠ For a best usage for the users without javascript you should add a ```no-js``` class on the ```html``` element
+
+```html
+<html class="no-js">
+```
+
+Finally, add this one line ```<script>``` before any ```<link>``` or ```<style>``` elements in the document ```<head>:```
+
+```html
+<!-- Remove the no-js class on the <html> element if JavaScript is on -->
+<script>document.documentElement.classList.remove("no-js")</script>
+```
+
+See [https://github.com/malchata/yall.js/#what-about-users-without-javascript](https://github.com/malchata/yall.js/#what-about-users-without-javascript)
+for more details.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
