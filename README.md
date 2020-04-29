@@ -368,7 +368,7 @@ Finally, add this one line ```<script>``` before any ```<link>``` or ```<style>`
 
 ```html
 <!-- Remove the no-js class on the <html> element if JavaScript is on -->
-<script>document.documentElement.classList.remove("no-js")</script>
+<script>document.documentElement.classList.remove("no-js");</script>
 ```
 
 See [https://github.com/malchata/yall.js/#what-about-users-without-javascript](https://github.com/malchata/yall.js/#what-about-users-without-javascript)
