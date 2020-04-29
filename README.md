@@ -49,7 +49,7 @@ umanit_twig_image:
     blur_class_selector: lazy-blur
 ```
 
-| ⚠ | If you customize classes, you can not use anymore the javascript module and css which relies on them |
+| ⚠ | If you customize classes, you can not use anymore the javascript module and CSS which relies on them |
 |---|------------------------------------------------------------------------------------------------------|
 
 ## Usage
@@ -62,6 +62,7 @@ The following Twig functions are available in your templates.
 1. [umanit_image_picture](#umanit_image_picture)
 1. [umanit_image_srcset](#umanit_image_srcset)
 1. [(Optional) Javascript module to instantiate yall.js](#optional-javascript-module-to-instantiate-yalljs)
+1. [(Optional) Import CSS files for blur effect on yall.js lazy images](#optional-import-css-files-for-blur-effect-on-yalljs-lazy-images)
 
 When a [LiipImagine filter](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/filters.html#built-in-filters) is
 used, the extension will read his configuration and automatically takes the right width to apply in the markup.
@@ -345,9 +346,9 @@ umanitImageLazyLoad(yall);
 
 ```
 
-### (Optional) Import css files for blur effect on yall.js lazy images
+### (Optional) Import CSS files for blur effect on yall.js lazy images
 
-You can import the css file for adding a blur effect on lazy images 
+You can import the CSS file for adding a blur effect on lazy images.
 
 ```twig
 <link rel="stylesheet" href="{{ asset('bundles/umanittwigimage/css/umanit-image-lazy-loading.css') }}">
