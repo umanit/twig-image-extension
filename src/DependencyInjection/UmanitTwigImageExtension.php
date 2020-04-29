@@ -29,6 +29,7 @@ class UmanitTwigImageExtension extends Extension
         $definition->addMethodCall('setLazyLoadConfiguration', [
             $config['lazy_load']['class_selector'],
             $config['lazy_load']['placeholder_class_selector'],
+            $config['lazy_load']['blur_class_selector'],
         ]);
     }
 }

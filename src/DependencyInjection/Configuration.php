@@ -31,6 +31,9 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('placeholder_class_selector')
                             ->defaultValue('lazy-placeholder')
                         ->end() // placeholder_class_selector
+                        ->scalarNode('blur_class_selector')
+                            ->defaultValue('lazy-blur')
+                        ->end() // blur_class_selector
                     ->end()
                 ->end() // lazy_load
             ->end()
