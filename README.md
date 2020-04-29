@@ -364,7 +364,7 @@ import '../../public/bundles/umanittwigimage/css/umanit-image-lazy-loading.css';
 <html class="no-js">
 ```
 
-Finally, add this one line ```<script>``` before any ```<link>``` or ```<style>``` elements in the document ```<head>:```
+Finally, add this one line `<script>` before any `<link>` or `<style>` elements in the document `<head>`
 
 ```html
 <!-- Remove the no-js class on the <html> element if JavaScript is on -->
