@@ -358,7 +358,7 @@ Example in webpack
 import '../../public/bundles/umanittwigimage/css/umanit-image-lazy-loading.css';
 ```
 
-⚠ For a best usage for the users without javascript you should add a ```no-js``` class on the ```html``` element
+⚠ For a best usage for the users without javascript you should add a `no-js` class on the `html` element
 
 ```html
 <html class="no-js">
