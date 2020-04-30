@@ -336,7 +336,9 @@ provides a javascript module that can be called in your application.
 
 [yall.js](https://github.com/malchata/yall.js/) needs to be installed manually: `yarn add yall-js`
 
-Then you need to import the module and instantiate it by passing the yall library.
+Then you need to import the module and instantiate it by passing the yall library. An optional argument
+`loadEventCallback` is available if you want to add more customization. It will be called in the `load` event of
+[yall.js](https://github.com/malchata/yall.js/).
 
 ```js
 import yall from 'yall-js';
