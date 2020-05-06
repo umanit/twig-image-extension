@@ -17,7 +17,7 @@
         }
     },
     "require": {
-        "php": "^7.3",
+        "php": "^7.2",
         "liip/imagine-bundle": "^2.3",
         "twig/twig": "^2.12|^3.0"
     }
