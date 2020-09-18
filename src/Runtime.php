@@ -120,13 +120,15 @@ HTML;
         array $srcsetFilters = [],
         array $sources = [],
         string $alt = '',
-        string $imgClass = ''
+        string $imgClass = '',
+        string $pictureClass = ''
     ): string {
         $sourcesMarkup = $this->getSourcesMarkup($sources, false);
         $imgMarkup = $this->getNonLazyLoadImgMarkup($path, $srcFilter, $srcsetFilters, $alt, $imgClass);
+        $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         return <<<HTML
-<picture>
+<picture $classPictureHtml>
   $sourcesMarkup
   $imgMarkup
 </picture>
@@ -140,13 +142,15 @@ HTML;
         array $srcsetFilters = [],
         array $sources = [],
         string $alt = '',
-        string $imgClass = ''
+        string $imgClass = '',
+        string $pictureClass = ''
     ): string {
         $sourcesMarkup = $this->getSourcesMarkup($sources, true);
         $imgMarkup = $this->getImgMarkup($path, $srcFilter, $placeholderFilter, $srcsetFilters, $alt, $imgClass);
+        $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         return <<<HTML
-<picture>
+<picture $classPictureHtml>
   $sourcesMarkup
   $imgMarkup
 </picture>
