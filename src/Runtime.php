@@ -135,8 +135,8 @@ HTML;
 
     public function getUmanitImagePictureLazyLoad(
         string $path,
-        string $srcFilter,
         string $placeholderFilter = null,
+        string $srcFilter,
         array $srcsetFilters = [],
         array $sources = [],
         string $alt = '',
