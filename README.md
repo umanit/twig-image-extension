@@ -204,6 +204,7 @@ if needed.  The `lazy` and `lazy-placeholder` classes are add to facilitate the 
 | sources           | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. |
 | alt               | The text to put in the `alt` attribute of the `img`                                                                                                                                                                                                                                          |
 | imgClass          | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
+| pictureClass      | Classes to add on the `picture`                                                                                                                                                                                                                                                                  |
 
 #### Example
 
@@ -225,14 +226,15 @@ if needed.  The `lazy` and `lazy-placeholder` classes are add to facilitate the 
         (image2.path): ['thumbnail', 'large_thumbnail']
       },
       'alt img',
-      'img img-fluid'
+      'img img-fluid',
+      'class-picture'
     )
   ```
 
   HTML generated
 
   ```html
-  <picture>
+  <picture class="class-picture">
     <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w">
     <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w">
     <img
@@ -262,6 +264,7 @@ if needed.
 | sources           | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. |
 | alt               | The text to put in the `alt` attribute of the `img`                                                                                                                                                                                                                                          |
 | imgClass          | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
+| pictureClass      | Classes to add on the `picture`                                                                                                                                                                                                                                                                  |
 
 #### Example
 
@@ -282,14 +285,15 @@ if needed.
         (image2.path): ['thumbnail', 'large_thumbnail']
       },
       'alt img',
-      'img img-fluid'
+      'img img-fluid',
+      'class-picture'
     )
   ```
 
   HTML generated
 
   ```html
-  <picture>
+  <picture class="class-picture">
     <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w">
     <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w">
     <img
