@@ -104,8 +104,8 @@ Generates a `figure` tag with an `img` inside and his `noscript` version. The `l
   ```twig
       umanit_image_figure_lazy_load(
         image.path,
-        'tiny_thumbnail',
         'small_thumbnail',
+        'tiny_thumbnail',
         ['thumbnail', 'large_thumbnail'],
         'image alt',
         'img img--cover img--zoom',
@@ -213,8 +213,8 @@ if needed.  The `lazy` and `lazy-placeholder` classes are add to facilitate the 
   ```twig
     umanit_image_picture_lazy_load(
       image.path,
-      'tiny_thumbnail',
       'small_thumbnail',
+      'tiny_thumbnail',
       ['thumbnail', 'large_thumbnail'],
       {
         (image.path): {
