@@ -180,6 +180,11 @@ HTML;
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('data-srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
             '';
+        $dimensionHtml = !empty($srcFilter) ?
+            $this->getHeightFromFilter($srcFilter) !== 0 ?
+                sprintf('width="%s" height="%s"', $this->getWidthFromFilter($srcFilter), $this->getHeightFromFilter($srcFilter)) :
+                '':
+            '';
         $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
         $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
         $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
@@ -192,6 +197,7 @@ HTML;
     data-src="$srcPath"
     $srcsetHtml
     $sizesHtml
+    $dimensionHtml
   >
 HTML;
     }
@@ -208,6 +214,11 @@ HTML;
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
             '';
+        $dimensionHtml = !empty($srcFilter) ?
+            $this->getHeightFromFilter($srcFilter) !== 0 ?
+                sprintf('width="%s" height="%s"', $this->getWidthFromFilter($srcFilter), $this->getHeightFromFilter($srcFilter)) :
+                '':
+            '';
         $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
         $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
 
@@ -218,6 +229,7 @@ HTML;
     src="$srcPath"
     $srcsetHtml
     $sizesHtml
+    $dimensionHtml
   >
 HTML;
     }
@@ -267,5 +279,17 @@ HTML;
         }
 
         return (int) $width;
+    }
+
+    private function getHeightFromFilter(string $filter): int
+    {
+        $filterConfig = $this->filters[$filter];
+        $height = null;
+
+        if (isset($filterConfig['filters']['thumbnail']['size'])) {
+            $height = $filterConfig['filters']['thumbnail']['size'][1];
+        }
+
+        return (int) $height;
     }
 }
