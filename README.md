@@ -77,6 +77,8 @@ List of supported filters:
  * [thumbnail](https://symfony.com/doc/current/bundles/LiipImagineBundle/filters/sizing.html#thumbnails): Use the first
  value of `size`
 
+With the use of Thumbnail Filter, `width` and `height` attributes are added in the `<img>` tag (since they are provided in the LiipImagine Filter). By doing this, sudden layout shifts are avoided for a better user experience.  
+
 ### umanit_image_figure_lazy_load
 
 Generates a `figure` tag with an `img` inside and his `noscript` version. The `lazy`,

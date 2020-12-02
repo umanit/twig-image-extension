@@ -180,11 +180,15 @@ HTML;
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('data-srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
             '';
-        $dimensionHtml = !empty($srcFilter) ?
-            $this->getHeightFromFilter($srcFilter) !== 0 ?
-                sprintf('width="%s" height="%s"', $this->getWidthFromFilter($srcFilter), $this->getHeightFromFilter($srcFilter)) :
-                '':
-            '';
+        try {
+            $dimensionHtml = !empty($srcFilter) ?
+                $this->getHeightFromFilter($srcFilter) !== 0 ?
+                    sprintf('width="%s" height="%s"', $this->getWidthFromFilter($srcFilter), $this->getHeightFromFilter($srcFilter)) :
+                    '':
+                '';
+        } catch (\LogicException $e) {
+            $dimensionHtml ='';
+        }
         $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
         $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
         $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
@@ -214,11 +218,15 @@ HTML;
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
             '';
-        $dimensionHtml = !empty($srcFilter) ?
-            $this->getHeightFromFilter($srcFilter) !== 0 ?
-                sprintf('width="%s" height="%s"', $this->getWidthFromFilter($srcFilter), $this->getHeightFromFilter($srcFilter)) :
-                '':
-            '';
+        try {
+            $dimensionHtml = !empty($srcFilter) ?
+                $this->getHeightFromFilter($srcFilter) !== 0 ?
+                    sprintf('width="%s" height="%s"', $this->getWidthFromFilter($srcFilter), $this->getHeightFromFilter($srcFilter)) :
+                    '':
+                '';
+        } catch (\LogicException $e) {
+            $dimensionHtml ='';
+        }
         $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
         $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
 
@@ -288,6 +296,12 @@ HTML;
 
         if (isset($filterConfig['filters']['thumbnail']['size'])) {
             $height = $filterConfig['filters']['thumbnail']['size'][1];
+        }
+
+        if (null === $height) {
+            throw new \LogicException(
+                sprintf('Can not determine the height to use for the filter "%s"', $filter)
+            );
         }
 
         return (int) $height;
