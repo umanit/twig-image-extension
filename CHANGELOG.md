@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.7] - 2021-04-02
+### Added
+- Add the possibility to define a `figcaption` on `figure` markups
+
+### Modified
+- Add original image `width` and `height` attributes on `img` and `source` markups if not available for the given
+  `filter`
+
 ## [1.0.6] - 2021-01-25
 ### Added
 - Add `width` and `height` attributes on `img` markup if available for the given `filter`
@@ -45,7 +53,8 @@ blur effect
 ## 1.0.0 - 2020-04-14
 First release 🎉
 
-[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.0.6...master
+[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.0.7...master
+[1.0.7]: https://github.com/umanit/twig-image-extension/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/umanit/twig-image-extension/compare/1.0.5...1.0.6
 [1.0.5]: https://github.com/umanit/twig-image-extension/compare/1.0.4...1.0.5
 [1.0.4]: https://github.com/umanit/twig-image-extension/compare/1.0.3...1.0.4
