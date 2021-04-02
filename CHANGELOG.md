@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.6] - 2021-01-25
+### Added
+- Add `width` and `height` attributes on `img` markup if available for the given `filter`
+
+## [1.0.5] - 2020-10-01
+### Added
+- Add an option to place a class on `figure` markups
+
+### Fixed
+- Fix incoherence in the `README`
+
 ## [1.0.4] - 2020-05-06
 ### Modified
 - Decrease required PHP version to 7.2
@@ -34,7 +45,9 @@ blur effect
 ## 1.0.0 - 2020-04-14
 First release 🎉
 
-[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.0.4...master
+[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.0.6...master
+[1.0.6]: https://github.com/umanit/twig-image-extension/compare/1.0.5...1.0.6
+[1.0.5]: https://github.com/umanit/twig-image-extension/compare/1.0.4...1.0.5
 [1.0.4]: https://github.com/umanit/twig-image-extension/compare/1.0.3...1.0.4
 [1.0.3]: https://github.com/umanit/twig-image-extension/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/umanit/twig-image-extension/compare/1.0.1...1.0.2
