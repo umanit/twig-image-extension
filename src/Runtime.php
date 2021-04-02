@@ -73,7 +73,9 @@ class Runtime
         string $alt = '',
         string $imgClass = '',
         string $sizes = '100vw',
-        string $figureClass = ''
+        string $figureClass = '',
+        string $figcaptionText = '',
+        string $figcaptionClass = ''
     ): string {
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
@@ -84,10 +86,12 @@ class Runtime
             $sizes
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
+        $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
 
         return <<<HTML
 <figure $classFigureHtml>
   $nonLazyLoadImgMarkup
+  $figcaptionHtml
 </figure>
 HTML;
     }
@@ -100,7 +104,9 @@ HTML;
         string $alt = '',
         string $imgClass = '',
         string $sizes = '100vw',
-        string $figureClass = ''
+        string $figureClass = '',
+        string $figcaptionText = '',
+        string $figcaptionClass = ''
     ): string {
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
@@ -120,6 +126,7 @@ HTML;
             $sizes
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
+        $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
 
         return <<<HTML
 <figure $classFigureHtml>
@@ -127,6 +134,7 @@ HTML;
   <noscript>
     $nonLazyLoadImgMarkup
   </noscript>
+  $figcaptionHtml
 </figure>
 HTML;
     }
@@ -344,5 +352,18 @@ HTML;
                 return '';
             }
         });
+    }
+
+    private function getFigcaptionHtml(string $text = '', string $class = ''): string
+    {
+        if (!empty($text)) {
+            if (!empty($class)) {
+                $class = sprintf(' class="%s"', $class);
+            }
+
+            return sprintf('<figcaption%s>%s</figcaption>', $class, $text);
+        }
+
+        return '';
     }
 }

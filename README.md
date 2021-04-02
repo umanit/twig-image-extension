@@ -65,7 +65,9 @@ The following Twig functions are available in your templates.
 1. [(Optional) Import CSS files for blur effect on yall.js lazy images](#optional-import-css-files-for-blur-effect-on-yalljs-lazy-images)
 
 When a [LiipImagine filter](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/filters.html#built-in-filters) is
-used, the extension will read his configuration and automatically takes the right width to apply in the markup.
+used, the extension will read his configuration and automatically takes the right width or height to apply in the
+markup. If it's not possible, the extension try to get the original image dimensions instead. In both case, the result
+is saved in cache to avoid multiple process for the same image.
 
 When the used function is for lazy load, `lazy` and `lazy-placeholder` classes are used but can be customized as
 explained in the [Configuration](#configuration) part.
@@ -87,16 +89,18 @@ Generates a `figure` tag with an `img` inside and his `noscript` version. The `l
 
 #### Parameters
 
-| **Name**          | **Explanation**                                                         |
-|-------------------|-------------------------------------------------------------------------|
-| path              | Path to the image, used to generated the browser path with LiipImagine  |
-| srcFilter         | Name of the LiipImagine filter used to generate the path for `data-src` |
-| placeholderFilter | Name of the LiipImagine filter used to generate the path for `src`      |
-| srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`        |
-| alt               | The text to put in the `alt` attribute of the `img`                     |
-| imgClass          | Classes to add on the `img`                                             |
-| sizes             | Value of the `sizes` attribute (`100vw` if not defined)                 |
-| figureClass       | Classes to add on the `figure`                                          |
+| **Name**          | **Explanation**                                                                  |
+|-------------------|----------------------------------------------------------------------------------|
+| path              | Path to the image, used to generated the browser path with LiipImagine           |
+| srcFilter         | Name of the LiipImagine filter used to generate the path for `data-src`          |
+| placeholderFilter | Name of the LiipImagine filter used to generate the path for `src`               |
+| srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`                 |
+| alt               | The text to put in the `alt` attribute of the `img`                              |
+| imgClass          | Classes to add on the `img`                                                      |
+| sizes             | Value of the `sizes` attribute (`100vw` if not defined)                          |
+| figureClass       | Classes to add on the `figure`                                                   |
+| figcaptionText    | Text of the `figcaption` (if nothing is passed, no `figcaption` will be rendered |
+| figcaptionClass   | Classes to add on the `figcaption`                                               |
 
 #### Example
 
@@ -113,6 +117,8 @@ Generates a `figure` tag with an `img` inside and his `noscript` version. The `l
         'img img--cover img--zoom',
         '(min-width: 768px) 33.3vw, 100vw',
         'class-figure',
+        'Figcaption text',
+        'class-figcaption',
       )
   ```
 
@@ -139,6 +145,7 @@ Generates a `figure` tag with an `img` inside and his `noscript` version. The `l
         width="600" height="400"
       >
     </noscript>
+    <figcaption class="class-figcaption">Figcaption text</figcaption>
   </figure>
   ```
 </details>
@@ -149,15 +156,17 @@ Generates a `figure` tag with an `img` inside.
 
 #### Parameters
 
-| **Name**          | **Explanation**                                                        |
-|-------------------|------------------------------------------------------------------------|
-| path              | Path to the image, used to generated the browser path with LiipImagine |
-| srcFilter         | Name of the LiipImagine filter used to generate the path for `src`     |
-| srcsetFilters     | A list of LiipImagine filters used to generate the `srcset`            |
-| alt               | The text to put in the `alt` attribute of the `img`                    |
-| imgClass          | Classes to add on the `img`                                            |
-| sizes             | Value of the `sizes` attribute (`100vw` if not defined)                |
-| figureClass       | Classes to add on the `figure`                                         |
+| **Name**          | **Explanation**                                                                  |
+|-------------------|----------------------------------------------------------------------------------|
+| path              | Path to the image, used to generated the browser path with LiipImagine           |
+| srcFilter         | Name of the LiipImagine filter used to generate the path for `src`               |
+| srcsetFilters     | A list of LiipImagine filters used to generate the `srcset`                      |
+| alt               | The text to put in the `alt` attribute of the `img`                              |
+| imgClass          | Classes to add on the `img`                                                      |
+| sizes             | Value of the `sizes` attribute (`100vw` if not defined)                          |
+| figureClass       | Classes to add on the `figure`                                                   |
+| figcaptionText    | Text of the `figcaption` (if nothing is passed, no `figcaption` will be rendered |
+| figcaptionClass   | Classes to add on the `figcaption`                                               |
 
 #### Example
 
@@ -173,6 +182,8 @@ Generates a `figure` tag with an `img` inside.
         'img img--cover img--zoom',
         '(min-width: 768px) 33.3vw, 100vw',
         'class-figure',
+        'Figcaption text',
+        'class-figcaption',
       )
   ```
 
@@ -188,6 +199,7 @@ Generates a `figure` tag with an `img` inside.
       srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
       width="600" height="400"
     >
+    <figcaption class="class-figcaption">Figcaption text</figcaption>
   </figure>
   ```
 </details>
