@@ -8,6 +8,8 @@ services:
         class: Umanit\TwigImage\Runtime
         public: false
         arguments:
+            - '@cache.app'
             - '@liip_imagine.cache.manager'
             - '@liip_imagine.filter.manager'
+            - '@liip_imagine.data.manager'
         tags: ['twig.runtime']

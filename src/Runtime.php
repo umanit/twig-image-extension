@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace Umanit\TwigImage;
 
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Liip\ImagineBundle\Imagine\Data\DataManager;
 use Liip\ImagineBundle\Imagine\Filter\FilterManager;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * Class Runtime
  */
 class Runtime
 {
+    /** @var CacheInterface */
+    private $cache;
+
     /** @var CacheManager */
     private $cacheManager;
 
@@ -27,16 +32,28 @@ class Runtime
     /** @var string */
     private $lazyBlurClassSelector;
 
+    /** @var DataManager */
+    private $dataManager;
+
     /**
      * AppExtension constructor.
      *
-     * @param CacheManager  $cacheManager
-     * @param FilterManager $filterManager
+     * @param CacheInterface $cache
+     * @param CacheManager   $cacheManager
+     * @param FilterManager  $filterManager
+     * @param DataManager    $dataManager
      */
-    public function __construct(CacheManager $cacheManager, FilterManager $filterManager)
+    public function __construct(
+        CacheInterface $cache,
+        CacheManager $cacheManager,
+        FilterManager $filterManager,
+        DataManager $dataManager
+    )
     {
+        $this->cache = $cache;
         $this->cacheManager = $cacheManager;
         $this->filters = $filterManager->getFilterConfiguration()->all();
+        $this->dataManager = $dataManager;
     }
 
     public function setLazyLoadConfiguration(
@@ -180,18 +197,10 @@ HTML;
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('data-srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
             '';
-        try {
-            $dimensionHtml = !empty($srcFilter) ?
-                $this->getHeightFromFilter($srcFilter) !== 0 ?
-                    sprintf('width="%s" height="%s"', $this->getWidthFromFilter($srcFilter), $this->getHeightFromFilter($srcFilter)) :
-                    '':
-                '';
-        } catch (\LogicException $e) {
-            $dimensionHtml ='';
-        }
         $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
         $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
         $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
+        $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
 
         return <<<HTML
   <img
@@ -218,17 +227,9 @@ HTML;
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
             '';
-        try {
-            $dimensionHtml = !empty($srcFilter) ?
-                $this->getHeightFromFilter($srcFilter) !== 0 ?
-                    sprintf('width="%s" height="%s"', $this->getWidthFromFilter($srcFilter), $this->getHeightFromFilter($srcFilter)) :
-                    '':
-                '';
-        } catch (\LogicException $e) {
-            $dimensionHtml ='';
-        }
         $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
         $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
+        $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
 
         return <<<HTML
   <img
@@ -252,6 +253,7 @@ HTML;
             $media = '';
             $sizes = '';
             $srcSet = $this->getUmanitImageSrcset($sourcePath, $sourceFilters);
+            $dimensionHtml = $this->getImageDimensions($sourcePath, current($sourceFilters));
 
             if (isset($sourceDataset['media'])) {
                 $media = sprintf('media="%s"', $sourceDataset['media']);
@@ -262,7 +264,7 @@ HTML;
             }
 
             $sourcesHtml[] = <<<HTML
-<source $media $sizes $srcSetAttribute="$srcSet">
+<source $media $sizes $srcSetAttribute="$srcSet" $dimensionHtml>
 HTML;
         }
 
@@ -295,7 +297,7 @@ HTML;
         $height = null;
 
         if (isset($filterConfig['filters']['thumbnail']['size'])) {
-            $height = $filterConfig['filters']['thumbnail']['size'][1];
+            $height = end($filterConfig['filters']['thumbnail']['size']);
         }
 
         if (null === $height) {
@@ -305,5 +307,42 @@ HTML;
         }
 
         return (int) $height;
+    }
+
+    private function getImageDimensions(string $path, string $filter): string
+    {
+        if (empty($filter)) {
+            return '';
+        }
+
+        try {
+            return $this->getHeightFromFilter($filter) !== 0 ?
+                sprintf(
+                    'width="%s" height="%s"',
+                    $this->getWidthFromFilter($filter),
+                    $this->getHeightFromFilter($filter)
+                ) :
+                '';
+        } catch (\LogicException $e) {
+            return $this->getOriginalImageDimensions($path, $filter);
+        }
+    }
+
+    private function getOriginalImageDimensions(string $path, string $filter): string
+    {
+        return $this->cache->get(md5($path.$filter), function () use ($path, $filter) {
+            try {
+                $image = $this->dataManager->find($filter, $path);
+                $sizes = getimagesizefromstring($image->getContent());
+
+                if (false === $sizes || !isset($sizes[3])) {
+                    return '';
+                }
+
+                return $sizes[3];
+            } catch (\Throwable $e) {
+                return '';
+            }
+        });
     }
 }
