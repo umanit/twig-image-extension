@@ -219,7 +219,7 @@ HTML;
     $srcsetHtml
     $sizesHtml
     $dimensionHtml
-  >
+  />
 HTML;
     }
 
@@ -247,7 +247,7 @@ HTML;
     $srcsetHtml
     $sizesHtml
     $dimensionHtml
-  >
+  />
 HTML;
     }
 
