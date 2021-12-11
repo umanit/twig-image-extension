@@ -9,9 +9,6 @@ use Liip\ImagineBundle\Imagine\Data\DataManager;
 use Liip\ImagineBundle\Imagine\Filter\FilterManager;
 use Symfony\Contracts\Cache\CacheInterface;
 
-/**
- * Class Runtime
- */
 class Runtime
 {
     /** @var CacheInterface */
@@ -35,21 +32,12 @@ class Runtime
     /** @var DataManager */
     private $dataManager;
 
-    /**
-     * AppExtension constructor.
-     *
-     * @param CacheInterface $cache
-     * @param CacheManager   $cacheManager
-     * @param FilterManager  $filterManager
-     * @param DataManager    $dataManager
-     */
     public function __construct(
         CacheInterface $cache,
         CacheManager $cacheManager,
         FilterManager $filterManager,
         DataManager $dataManager
-    )
-    {
+    ) {
         $this->cache = $cache;
         $this->cacheManager = $cacheManager;
         $this->filters = $filterManager->getFilterConfiguration()->all();

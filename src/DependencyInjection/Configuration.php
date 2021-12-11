@@ -7,9 +7,6 @@ namespace Umanit\TwigImage\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * Class Configuration
- */
 class Configuration implements ConfigurationInterface
 {
     public function getConfigTreeBuilder(): TreeBuilder
@@ -23,15 +20,15 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('class_selector')
                             ->defaultValue('lazy')
-                        ->end() // class_selector
+                        ->end()
                         ->scalarNode('placeholder_class_selector')
                             ->defaultValue('lazy-placeholder')
-                        ->end() // placeholder_class_selector
+                        ->end()
                         ->scalarNode('blur_class_selector')
                             ->defaultValue('lazy-blur')
-                        ->end() // blur_class_selector
+                        ->end()
                     ->end()
-                ->end() // lazy_load
+                ->end()
             ->end()
         ;
 

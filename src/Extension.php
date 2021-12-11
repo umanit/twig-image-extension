@@ -7,9 +7,6 @@ namespace Umanit\TwigImage;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-/**
- * Class Extension
- */
 class Extension extends AbstractExtension
 {
     public function getFunctions(): array
