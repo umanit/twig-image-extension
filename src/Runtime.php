@@ -298,35 +298,35 @@ HTML;
             return '';
         }
 
-        try {
-            return $this->getHeightFromFilter($filter) !== 0 ?
-                sprintf(
-                    'width="%s" height="%s"',
-                    $this->getWidthFromFilter($filter),
-                    $this->getHeightFromFilter($filter)
-                ) :
-                '';
-        } catch (\LogicException $e) {
-            return $this->getOriginalImageDimensions($path, $filter);
-        }
+        return $this->cache->get(md5($path.$filter), function () use ($path, $filter) {
+            try {
+                return $this->getHeightFromFilter($filter) !== 0 ?
+                    sprintf(
+                        'width="%s" height="%s"',
+                        $this->getWidthFromFilter($filter),
+                        $this->getHeightFromFilter($filter)
+                    ) :
+                    '';
+            } catch (\LogicException $e) {
+                return $this->getOriginalImageDimensions($path, $filter);
+            }
+        });
     }
 
     private function getOriginalImageDimensions(string $path, string $filter): string
     {
-        return $this->cache->get(md5($path.$filter), function () use ($path, $filter) {
-            try {
-                $image = $this->dataManager->find($filter, $path);
-                $sizes = getimagesizefromstring($image->getContent());
+        try {
+            $image = $this->dataManager->find($filter, $path);
+            $sizes = getimagesizefromstring($image->getContent());
 
-                if (false === $sizes || !isset($sizes[3])) {
-                    return '';
-                }
-
-                return $sizes[3];
-            } catch (\Throwable $e) {
+            if (false === $sizes || !isset($sizes[3])) {
                 return '';
             }
-        });
+
+            return $sizes[3];
+        } catch (\Throwable $e) {
+            return '';
+        }
     }
 
     private function getFigcaptionHtml(string $text = '', string $class = ''): string

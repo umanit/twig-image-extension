@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Add PHP 8.0 compatibility
+
+### Changed
+- Drop support for PHP <7.4
+
+### Fixed
+- Self-close `<img />` elements
 
 ## [1.0.7] - 2021-04-02
 ### Added
