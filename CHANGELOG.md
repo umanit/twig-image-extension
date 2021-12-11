@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Drop support for PHP <7.4
+- Image dimensions are taken from the filter result when possible and fallbacks to the original image otherwise
 
 ### Fixed
 - Self-close `<img />` elements

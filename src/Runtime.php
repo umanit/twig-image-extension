@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Umanit\TwigImage;
 
+use Liip\ImagineBundle\Binary\BinaryInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Liip\ImagineBundle\Imagine\Data\DataManager;
 use Liip\ImagineBundle\Imagine\Filter\FilterManager;
@@ -13,10 +14,10 @@ class Runtime
 {
     private CacheInterface $cache;
     private CacheManager $cacheManager;
-    private array $filters;
     private string $lazyLoadClassSelector;
     private string $lazyLoadPlaceholderClassSelector;
     private string $lazyBlurClassSelector;
+    private FilterManager $filterManager;
     private DataManager $dataManager;
 
     public function __construct(
@@ -27,7 +28,7 @@ class Runtime
     ) {
         $this->cache = $cache;
         $this->cacheManager = $cacheManager;
-        $this->filters = $filterManager->getFilterConfiguration()->all();
+        $this->filterManager = $filterManager;
         $this->dataManager = $dataManager;
     }
 
@@ -163,7 +164,7 @@ HTML;
             return sprintf(
                 '%s %uw',
                 $this->cacheManager->getBrowserPath($path, $filter),
-                $this->getWidthFromFilter($filter)
+                $this->getImageWidth($path, $filter)
             );
         }, $filters));
     }
@@ -254,42 +255,19 @@ HTML;
         return implode("\n", $sourcesHtml);
     }
 
-    private function getWidthFromFilter(string $filter): int
+    private function getImageWidth(string $path, string $filter): int
     {
-        $filterConfig = $this->filters[$filter];
-        $width = null;
-
-        if (isset($filterConfig['filters']['relative_resize']['widen'])) {
-            $width = $filterConfig['filters']['relative_resize']['widen'];
-        } elseif (isset($filterConfig['filters']['thumbnail']['size'])) {
-            $width = current($filterConfig['filters']['thumbnail']['size']);
-        }
-
-        if (null === $width) {
-            throw new \LogicException(
-                sprintf('Can not determine the width to use for the filter "%s"', $filter)
-            );
-        }
-
-        return (int) $width;
-    }
-
-    private function getHeightFromFilter(string $filter): int
-    {
-        $filterConfig = $this->filters[$filter];
-        $height = null;
-
-        if (isset($filterConfig['filters']['thumbnail']['size'])) {
-            $height = end($filterConfig['filters']['thumbnail']['size']);
-        }
-
-        if (null === $height) {
-            throw new \LogicException(
-                sprintf('Can not determine the height to use for the filter "%s"', $filter)
-            );
-        }
-
-        return (int) $height;
+        return $this->cache->get(md5('__width__'.$path.$filter), function () use ($path, $filter) {
+            try {
+                return $this->getImageSizeFromString(
+                    $this->getImage($path, $filter, true)->getContent()
+                )['width'];
+            } catch (\Throwable $e) {
+                return $this->getImageSizeFromString(
+                    $this->getImage($path, $filter, false)->getContent()
+                )['width'];
+            }
+        });
     }
 
     private function getImageDimensions(string $path, string $filter): string
@@ -300,33 +278,49 @@ HTML;
 
         return $this->cache->get(md5($path.$filter), function () use ($path, $filter) {
             try {
-                return $this->getHeightFromFilter($filter) !== 0 ?
-                    sprintf(
-                        'width="%s" height="%s"',
-                        $this->getWidthFromFilter($filter),
-                        $this->getHeightFromFilter($filter)
-                    ) :
-                    '';
-            } catch (\LogicException $e) {
-                return $this->getOriginalImageDimensions($path, $filter);
+                return $this->getWidthHeightHtmlString($this->getImage($path, $filter, true)->getContent());
+            } catch (\Throwable $e) {
+                return $this->getWidthHeightHtmlString($this->getImage($path, $filter, false)->getContent());
             }
         });
     }
 
-    private function getOriginalImageDimensions(string $path, string $filter): string
+    private function createFilteredBinary(string $path, string $filter): BinaryInterface
     {
-        try {
-            $image = $this->dataManager->find($filter, $path);
-            $sizes = getimagesizefromstring($image->getContent());
+        $binary = $this->dataManager->find($filter, $path);
 
-            if (false === $sizes || !isset($sizes[3])) {
-                return '';
-            }
+        return $this->filterManager->applyFilter($binary, $filter);
+    }
 
-            return $sizes[3];
-        } catch (\Throwable $e) {
+    private function getImage(string $path, string $filter, bool $applyFilter): BinaryInterface
+    {
+        return $applyFilter ? $this->createFilteredBinary($path, $filter) : $this->dataManager->find($filter, $path);
+    }
+
+    private function getImageSizeFromString(string $content): ?array
+    {
+        $sizes = getimagesizefromstring($content);
+
+        if (false === $sizes) {
+            return null;
+        }
+
+        return [
+            'width'  => $sizes[0],
+            'height' => $sizes[1],
+            'html'   => $sizes[3],
+        ];
+    }
+
+    private function getWidthHeightHtmlString(string $content): string
+    {
+        $sizes = $this->getImageSizeFromString($content);
+
+        if (null === $sizes) {
             return '';
         }
+
+        return $sizes['html'];
     }
 
     private function getFigcaptionHtml(string $text = '', string $class = ''): string
