@@ -7,15 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [1.1.0] - 2021-12-11
-### Added
-- Add PHP 8.0 compatibility
-
 ### Changed
 - Drop support for PHP <7.4
 - Image dimensions are taken from the filter result when possible and fallbacks to the original image otherwise
 
 ### Fixed
 - Self-close `<img />` elements
+
+## [1.0.8] - 2021-08-02
+### Added
+- Add PHP 8.0 compatibility
 
 ## [1.0.7] - 2021-04-02
 ### Added
@@ -65,7 +66,8 @@ blur effect
 First release 🎉
 
 [Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.1.0...master
-[1.1.0]: https://github.com/umanit/twig-image-extension/compare/1.0.7...1.1.0
+[1.1.0]: https://github.com/umanit/twig-image-extension/compare/1.0.8...1.1.0
+[1.0.8]: https://github.com/umanit/twig-image-extension/compare/1.0.7...1.0.8
 [1.0.7]: https://github.com/umanit/twig-image-extension/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/umanit/twig-image-extension/compare/1.0.5...1.0.6
 [1.0.5]: https://github.com/umanit/twig-image-extension/compare/1.0.4...1.0.5
