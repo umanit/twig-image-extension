@@ -11,26 +11,13 @@ use Symfony\Contracts\Cache\CacheInterface;
 
 class Runtime
 {
-    /** @var CacheInterface */
-    private $cache;
-
-    /** @var CacheManager */
-    private $cacheManager;
-
-    /** @var array */
-    private $filters;
-
-    /** @var string */
-    private $lazyLoadClassSelector;
-
-    /** @var string */
-    private $lazyLoadPlaceholderClassSelector;
-
-    /** @var string */
-    private $lazyBlurClassSelector;
-
-    /** @var DataManager */
-    private $dataManager;
+    private CacheInterface $cache;
+    private CacheManager $cacheManager;
+    private array $filters;
+    private string $lazyLoadClassSelector;
+    private string $lazyLoadPlaceholderClassSelector;
+    private string $lazyBlurClassSelector;
+    private DataManager $dataManager;
 
     public function __construct(
         CacheInterface $cache,
