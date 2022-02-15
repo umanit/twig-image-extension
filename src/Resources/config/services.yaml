@@ -13,4 +13,6 @@ services:
             - '@liip_imagine.filter.manager'
             - '@liip_imagine.data.manager'
             - '@liip_imagine'
+            - '%umanit_twig_image.use_liip_default_image%'
+            - '%liip_imagine.default_image%'
         tags: ['twig.runtime']

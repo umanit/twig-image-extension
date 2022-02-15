@@ -25,5 +25,11 @@ class UmanitTwigImageExtension extends Extension
             $config['lazy_load']['placeholder_class_selector'],
             $config['lazy_load']['blur_class_selector'],
         ]);
+
+        if ($config['use_liip_default_image'] && null === $container->getParameter('liip_imagine.default_image')) {
+            throw new \LogicException('You must define the parameter "liip_imagine.default_image" if you want to use the "use_liip_default_image" option.');
+        }
+
+        $container->setParameter('umanit_twig_image.use_liip_default_image', $config['use_liip_default_image']);
     }
 }

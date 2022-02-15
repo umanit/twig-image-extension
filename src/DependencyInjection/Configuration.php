@@ -15,6 +15,10 @@ class Configuration implements ConfigurationInterface
 
         $treeBuilder->getRootNode()
             ->children()
+                ->booleanNode('use_liip_default_image')
+                    ->info('Use the default image defined in Liip if no image is given in functions calls')
+                    ->defaultFalse()
+                ->end()
                 ->arrayNode('lazy_load')
                     ->addDefaultsIfNotSet()
                     ->children()

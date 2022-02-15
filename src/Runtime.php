@@ -24,19 +24,25 @@ class Runtime
     private string $lazyBlurClassSelector;
     private DataManager $dataManager;
     private ImagineInterface $imagine;
+    private bool $useLiipDefaultImage;
+    private ?string $liipDefaultImage;
 
     public function __construct(
         CacheInterface $cache,
         CacheManager $cacheManager,
         FilterManager $filterManager,
         DataManager $dataManager,
-        ImagineInterface $imagine
+        ImagineInterface $imagine,
+        bool $useLiipDefaultImage,
+        ?string $liipDefaultImage
     ) {
         $this->cache = $cache;
         $this->cacheManager = $cacheManager;
         $this->filters = $filterManager->getFilterConfiguration()->all();
         $this->dataManager = $dataManager;
         $this->imagine = $imagine;
+        $this->useLiipDefaultImage = $useLiipDefaultImage;
+        $this->liipDefaultImage = $liipDefaultImage;
     }
 
     public function setLazyLoadConfiguration(
@@ -50,7 +56,7 @@ class Runtime
     }
 
     public function getImageFigure(
-        string $path,
+        ?string $path,
         string $srcFilter,
         array $srcsetFilters = [],
         string $alt = '',
@@ -63,6 +69,7 @@ class Runtime
         string $figureDataAttributes = null,
         string $imgDataAttributes = null
     ): string {
+        $path = $this->processPath($path);
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
             $srcFilter,
@@ -85,7 +92,7 @@ HTML;
     }
 
     public function getImageFigureLazyLoad(
-        string $path,
+        ?string $path,
         string $srcFilter,
         string $placeholderFilter = null,
         array $srcsetFilters = [],
@@ -99,6 +106,7 @@ HTML;
         string $figureDataAttributes = null,
         string $imgDataAttributes = null
     ): string {
+        $path = $this->processPath($path);
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
             $srcFilter,
@@ -135,7 +143,7 @@ HTML;
     }
 
     public function getImagePicture(
-        string $path,
+        ?string $path,
         string $srcFilter,
         array $srcsetFilters = [],
         array $sources = [],
@@ -146,6 +154,7 @@ HTML;
         string $pictureDataAttributes = null,
         string $imgDataAttributes = null
     ): string {
+        $path = $this->processPath($path);
         $sourcesMarkup = $this->getSourcesMarkup($sources, false);
         $imgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
@@ -168,7 +177,7 @@ HTML;
     }
 
     public function getImagePictureLazyLoad(
-        string $path,
+        ?string $path,
         string $srcFilter,
         string $placeholderFilter = null,
         array $srcsetFilters = [],
@@ -180,6 +189,7 @@ HTML;
         string $pictureDataAttributes = null,
         string $imgDataAttributes = null
     ): string {
+        $path = $this->processPath($path);
         $sourcesMarkup = $this->getSourcesMarkup($sources, true);
         $imgMarkup = $this->getImgMarkup(
             $path,
@@ -202,8 +212,10 @@ HTML;
 HTML;
     }
 
-    public function getImageSrcset(string $path, array $filters): string
+    public function getImageSrcset(?string $path, array $filters): string
     {
+        $path = $this->processPath($path);
+
         return implode(', ', array_map(function ($filter) use ($path) {
             return sprintf(
                 '%s %uw',
@@ -211,6 +223,19 @@ HTML;
                 $this->getWidthFromFilter($path, $filter)
             );
         }, $filters));
+    }
+
+    private function processPath(?string $path): string
+    {
+        if (!empty($path)) {
+            return $path;
+        }
+
+        if (!$this->useLiipDefaultImage) {
+            throw new \InvalidArgumentException('The path can not be empty');
+        }
+
+        return $this->liipDefaultImage;
     }
 
     private function getImgMarkup(

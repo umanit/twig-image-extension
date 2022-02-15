@@ -13,6 +13,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Add an `imgDataAttributes` option in functions to pass custom `data-attributes` on the `<img />`
 - Add an `pictureDataAttributes` (or `figureDataAttributes`) option in functions to pass custom `data-attributes` on
   the `<picture>` (or `<figure>`)
+- Add `use_liip_default_image` in order to use the Liip default image if none are given in functions calls
 
 ### Fixed
 

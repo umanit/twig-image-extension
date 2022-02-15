@@ -37,17 +37,21 @@ bin/console assets:install --symlink
 
 ## Configuration
 
-Some functions render HTML markup with ability to use lazy loading on images. It's possible to customize the classes
-used.
-
-You just need to create a file `config/packages/umanit_twig_image.yaml`:
-
 ```yaml
 umanit_twig_image:
+    use_liip_default_image: false
     class_selector: lazy
     placeholder_class_selector: lazy-placeholder
     blur_class_selector: lazy-blur
 ```
+
+By default, if the image path given in functions calls is null or empty, an exception is thrown. If you use the default
+image mecanism of Liip (see
+[the configuration of the bundle](https://symfony.com/bundles/LiipImagineBundle/current/configuration.html)), you can
+use it as a fallback for your calls. To do so, you need to change `use_liip_default_image` to `true`.
+
+Some functions render HTML markup with ability to use lazy loading on images. It's possible to customize the classes
+used with the 3 options `class_selector`, `placeholder_class_selector` and `blur_class_selector`.
 
 | ⚠   | If you customize classes, you can not use anymore the javascript module and CSS which relies on them |
 |-----|------------------------------------------------------------------------------------------------------|
