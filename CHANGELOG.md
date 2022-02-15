@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Add an `imgImportance` option in functions in order to [optimize resource loading](https://web.dev/priority-hints/)
+
 ### Fixed
 
 - Fix slowness introduced by the 1.0.6 with calculation of filtered images sizes

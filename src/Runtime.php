@@ -58,7 +58,8 @@ class Runtime
         string $sizes = '100vw',
         string $figureClass = '',
         string $figcaptionText = '',
-        string $figcaptionClass = ''
+        string $figcaptionClass = '',
+        string $imgImportance = null
     ): string {
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
@@ -66,7 +67,8 @@ class Runtime
             $srcsetFilters,
             $alt,
             $imgClass,
-            $sizes
+            $sizes,
+            $imgImportance
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
@@ -89,7 +91,8 @@ HTML;
         string $sizes = '100vw',
         string $figureClass = '',
         string $figcaptionText = '',
-        string $figcaptionClass = ''
+        string $figcaptionClass = '',
+        string $imgImportance = null
     ): string {
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
@@ -97,7 +100,8 @@ HTML;
             $srcsetFilters,
             $alt,
             $imgClass,
-            $sizes
+            $sizes,
+            $imgImportance
         );
         $imgMarkup = $this->getImgMarkup(
             $path,
@@ -106,7 +110,8 @@ HTML;
             $srcsetFilters,
             $alt,
             $imgClass,
-            $sizes
+            $sizes,
+            $imgImportance
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
@@ -129,10 +134,19 @@ HTML;
         array $sources = [],
         string $alt = '',
         string $imgClass = '',
-        string $pictureClass = ''
+        string $pictureClass = '',
+        string $imgImportance = null
     ): string {
         $sourcesMarkup = $this->getSourcesMarkup($sources, false);
-        $imgMarkup = $this->getNonLazyLoadImgMarkup($path, $srcFilter, $srcsetFilters, $alt, $imgClass);
+        $imgMarkup = $this->getNonLazyLoadImgMarkup(
+            $path,
+            $srcFilter,
+            $srcsetFilters,
+            $alt,
+            $imgClass,
+            null,
+            $imgImportance
+        );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         return <<<HTML
@@ -151,10 +165,20 @@ HTML;
         array $sources = [],
         string $alt = '',
         string $imgClass = '',
-        string $pictureClass = ''
+        string $pictureClass = '',
+        string $importance = null
     ): string {
         $sourcesMarkup = $this->getSourcesMarkup($sources, true);
-        $imgMarkup = $this->getImgMarkup($path, $srcFilter, $placeholderFilter, $srcsetFilters, $alt, $imgClass);
+        $imgMarkup = $this->getImgMarkup(
+            $path,
+            $srcFilter,
+            $placeholderFilter,
+            $srcsetFilters,
+            $alt,
+            $imgClass,
+            null,
+            $importance
+        );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         return <<<HTML
@@ -183,7 +207,8 @@ HTML;
         array $srcsetFilters = [],
         string $alt = '',
         string $imgClass = '',
-        string $sizes = null
+        string $sizes = null,
+        string $importance = null
     ): string {
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('data-srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
@@ -192,6 +217,7 @@ HTML;
         $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
         $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
         $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
+        $importanceHtml = $this->getImportanceHtml($importance);
 
         return <<<HTML
   <img
@@ -202,6 +228,7 @@ HTML;
     $srcsetHtml
     $sizesHtml
     $dimensionHtml
+    $importanceHtml
   />
 HTML;
     }
@@ -212,7 +239,8 @@ HTML;
         array $srcsetFilters = [],
         string $alt = '',
         string $imgClass = '',
-        string $sizes = null
+        string $sizes = null,
+        string $importance = null
     ): string {
         $classHtml = '' !== $imgClass ? sprintf('class="%s"', $imgClass) : '';
         $srcsetHtml = !empty($srcsetFilters) ?
@@ -221,6 +249,7 @@ HTML;
         $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
         $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
         $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
+        $importanceHtml = $this->getImportanceHtml($importance);
 
         return <<<HTML
   <img
@@ -230,6 +259,7 @@ HTML;
     $srcsetHtml
     $sizesHtml
     $dimensionHtml
+    $importanceHtml
   />
 HTML;
     }
@@ -344,5 +374,21 @@ HTML;
         }
 
         return '';
+    }
+
+    private function getImportanceHtml(string $importance = null): string
+    {
+        if (null === $importance) {
+            return '';
+        }
+
+        if (!\in_array($importance, ['low', 'high'], true)) {
+            throw new \InvalidArgumentException(sprintf(
+                'The importance %s is not valid. Only low and high are accepted.',
+                $importance
+            ));
+        }
+
+        return sprintf(' importance="%s"', $importance);
     }
 }
