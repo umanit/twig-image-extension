@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.1.1] - 2022-02-15
+
 ### Added
 
 - Add an `imgImportance` option in functions in order to [optimize resource loading](https://web.dev/priority-hints/)
@@ -101,7 +103,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 First release 🎉
 
-[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.1.0...master
+[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.1.1...master
+
+[1.1.1]: https://github.com/umanit/twig-image-extension/compare/1.1.0...1.1.1
 
 [1.1.0]: https://github.com/umanit/twig-image-extension/compare/1.0.8...1.1.0
 
