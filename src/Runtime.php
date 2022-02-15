@@ -49,7 +49,7 @@ class Runtime
         $this->lazyBlurClassSelector = $lazyBlurClassSelector;
     }
 
-    public function getUmanitImageFigure(
+    public function getImageFigure(
         string $path,
         string $srcFilter,
         array $srcsetFilters = [],
@@ -68,20 +68,21 @@ class Runtime
             $alt,
             $imgClass,
             $sizes,
-            $imgImportance
+            $imgImportance,
+            $imgDataAttributes
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
 
         return <<<HTML
-<figure $classFigureHtml>
+<figure $classFigureHtml $containerDataAttributes>
   $nonLazyLoadImgMarkup
   $figcaptionHtml
 </figure>
 HTML;
     }
 
-    public function getUmanitImageFigureLazyLoad(
+    public function getImageFigureLazyLoad(
         string $path,
         string $srcFilter,
         string $placeholderFilter = null,
@@ -127,7 +128,7 @@ HTML;
 HTML;
     }
 
-    public function getUmanitImagePicture(
+    public function getImagePicture(
         string $path,
         string $srcFilter,
         array $srcsetFilters = [],
@@ -145,19 +146,20 @@ HTML;
             $alt,
             $imgClass,
             null,
-            $imgImportance
+            $imgImportance,
+            $imgDataAttributes
         );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         return <<<HTML
-<picture $classPictureHtml>
+<picture $classPictureHtml $containerDataAttributes>
   $sourcesMarkup
   $imgMarkup
 </picture>
 HTML;
     }
 
-    public function getUmanitImagePictureLazyLoad(
+    public function getImagePictureLazyLoad(
         string $path,
         string $srcFilter,
         string $placeholderFilter = null,
@@ -177,19 +179,20 @@ HTML;
             $alt,
             $imgClass,
             null,
-            $importance
+            $importance,
+            $imgDataAttributes
         );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         return <<<HTML
-<picture $classPictureHtml>
+<picture $classPictureHtml $containerDataAttributes>
   $sourcesMarkup
   $imgMarkup
 </picture>
 HTML;
     }
 
-    public function getUmanitImageSrcset(string $path, array $filters): string
+    public function getImageSrcset(string $path, array $filters): string
     {
         return implode(', ', array_map(function ($filter) use ($path) {
             return sprintf(
@@ -211,7 +214,7 @@ HTML;
         string $importance = null
     ): string {
         $srcsetHtml = !empty($srcsetFilters) ?
-            sprintf('data-srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
+            sprintf('data-srcset="%s"', $this->getImageSrcset($path, $srcsetFilters)) :
             '';
         $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
         $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
@@ -244,7 +247,7 @@ HTML;
     ): string {
         $classHtml = '' !== $imgClass ? sprintf('class="%s"', $imgClass) : '';
         $srcsetHtml = !empty($srcsetFilters) ?
-            sprintf('srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
+            sprintf('srcset="%s"', $this->getImageSrcset($path, $srcsetFilters)) :
             '';
         $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
         $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
@@ -273,7 +276,7 @@ HTML;
             $sourceFilters = $sourceDataset['filters'] ?? $sourceDataset;
             $media = '';
             $sizes = '';
-            $srcSet = $this->getUmanitImageSrcset($sourcePath, $sourceFilters);
+            $srcSet = $this->getImageSrcset($sourcePath, $sourceFilters);
             $dimensionHtml = $this->getImageDimensions($sourcePath, current($sourceFilters));
 
             if (isset($sourceDataset['media'])) {
