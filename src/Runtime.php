@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Umanit\TwigImage;
 
+use Imagine\Image\Box;
+use Imagine\Image\BoxInterface;
+use Imagine\Image\ImageInterface;
+use Imagine\Image\ImagineInterface;
+use Liip\ImagineBundle\Binary\FileBinaryInterface;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Liip\ImagineBundle\Imagine\Data\DataManager;
 use Liip\ImagineBundle\Imagine\Filter\FilterManager;
@@ -18,17 +23,20 @@ class Runtime
     private string $lazyLoadPlaceholderClassSelector;
     private string $lazyBlurClassSelector;
     private DataManager $dataManager;
+    private ImagineInterface $imagine;
 
     public function __construct(
         CacheInterface $cache,
         CacheManager $cacheManager,
         FilterManager $filterManager,
-        DataManager $dataManager
+        DataManager $dataManager,
+        ImagineInterface $imagine
     ) {
         $this->cache = $cache;
         $this->cacheManager = $cacheManager;
         $this->filters = $filterManager->getFilterConfiguration()->all();
         $this->dataManager = $dataManager;
+        $this->imagine = $imagine;
     }
 
     public function setLazyLoadConfiguration(
@@ -163,7 +171,7 @@ HTML;
             return sprintf(
                 '%s %uw',
                 $this->cacheManager->getBrowserPath($path, $filter),
-                $this->getWidthFromFilter($filter)
+                $this->getWidthFromFilter($path, $filter)
             );
         }, $filters));
     }
@@ -254,42 +262,64 @@ HTML;
         return implode("\n", $sourcesHtml);
     }
 
-    private function getWidthFromFilter(string $filter): int
+    private function getWidthFromFilter(string $path, string $filter): int
     {
-        $filterConfig = $this->filters[$filter];
-        $width = null;
-
-        if (isset($filterConfig['filters']['relative_resize']['widen'])) {
-            $width = $filterConfig['filters']['relative_resize']['widen'];
-        } elseif (isset($filterConfig['filters']['thumbnail']['size'])) {
-            $width = current($filterConfig['filters']['thumbnail']['size']);
-        }
-
-        if (null === $width) {
-            throw new \LogicException(
-                sprintf('Can not determine the width to use for the filter "%s"', $filter)
-            );
-        }
-
-        return (int) $width;
+        return $this->getSizeFromFilter($path, $filter)->getWidth();
     }
 
-    private function getHeightFromFilter(string $filter): int
+    private function getImage(string $path, string $filter): ImageInterface
     {
-        $filterConfig = $this->filters[$filter];
-        $height = null;
+        $binary = $this->dataManager->find($filter, $path);
 
-        if (isset($filterConfig['filters']['thumbnail']['size'])) {
-            $height = end($filterConfig['filters']['thumbnail']['size']);
+        if ($binary instanceof FileBinaryInterface) {
+            $image = $this->imagine->open($binary->getPath());
+        } else {
+            $image = $this->imagine->load($binary->getContent());
         }
 
-        if (null === $height) {
-            throw new \LogicException(
-                sprintf('Can not determine the height to use for the filter "%s"', $filter)
-            );
-        }
+        return $image;
+    }
 
-        return (int) $height;
+    private function getSizeFromFilter(string $path, string $filter): BoxInterface
+    {
+        return $this->cache->get(md5($path.$filter), function () use ($path, $filter) {
+            $box = $this->getImage($path, $filter)->getSize();
+            $filterConfig = $this->filters[$filter];
+
+            if (isset($filterConfig['filters']['thumbnail']['size'])) {
+                $sizes = $filterConfig['filters']['thumbnail']['size'];
+
+                return new Box($sizes[0], $sizes[1]);
+            }
+
+            if (isset($filterConfig['filters']['fixed'])) {
+                return new Box($filterConfig['filters']['fixed']['width'], $filterConfig['filters']['fixed']['height']);
+            }
+
+            if (isset($filterConfig['filters']['crop'])) {
+                $sizes = $filterConfig['filters']['crop']['size'];
+
+                return new Box($sizes[0], $sizes[1]);
+            }
+
+            if (isset($filterConfig['filters']['relative_resize']['widen'])) {
+                return $box->widen($filterConfig['filters']['relative_resize']['widen']);
+            }
+
+            if (isset($filterConfig['filters']['relative_resize']['heighten'])) {
+                return $box->heighten($filterConfig['filters']['relative_resize']['heighten']);
+            }
+
+            if (isset($filterConfig['filters']['relative_resize']['increase'])) {
+                return $box->increase($filterConfig['filters']['relative_resize']['increase']);
+            }
+
+            if (isset($filterConfig['filters']['relative_resize']['scale'])) {
+                return $box->scale($filterConfig['filters']['relative_resize']['scale']);
+            }
+
+            return $box;
+        });
     }
 
     private function getImageDimensions(string $path, string $filter): string
@@ -298,35 +328,9 @@ HTML;
             return '';
         }
 
-        return $this->cache->get(md5($path.$filter), function () use ($path, $filter) {
-            try {
-                return $this->getHeightFromFilter($filter) !== 0 ?
-                    sprintf(
-                        'width="%s" height="%s"',
-                        $this->getWidthFromFilter($filter),
-                        $this->getHeightFromFilter($filter)
-                    ) :
-                    '';
-            } catch (\LogicException $e) {
-                return $this->getOriginalImageDimensions($path, $filter);
-            }
-        });
-    }
+        $box = $this->getSizeFromFilter($path, $filter);
 
-    private function getOriginalImageDimensions(string $path, string $filter): string
-    {
-        try {
-            $image = $this->dataManager->find($filter, $path);
-            $sizes = getimagesizefromstring($image->getContent());
-
-            if (false === $sizes || !isset($sizes[3])) {
-                return '';
-            }
-
-            return $sizes[3];
-        } catch (\Throwable $e) {
-            return '';
-        }
+        return sprintf('width="%s" height="%s"', $box->getWidth(), $box->getHeight());
     }
 
     private function getFigcaptionHtml(string $text = '', string $class = ''): string

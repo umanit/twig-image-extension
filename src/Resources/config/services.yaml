@@ -12,4 +12,5 @@ services:
             - '@liip_imagine.cache.manager'
             - '@liip_imagine.filter.manager'
             - '@liip_imagine.data.manager'
+            - '@liip_imagine'
         tags: ['twig.runtime']
