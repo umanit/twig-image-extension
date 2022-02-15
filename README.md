@@ -49,8 +49,8 @@ umanit_twig_image:
     blur_class_selector: lazy-blur
 ```
 
-| ⚠ | If you customize classes, you can not use anymore the javascript module and CSS which relies on them |
-|---|------------------------------------------------------------------------------------------------------|
+| ⚠   | If you customize classes, you can not use anymore the javascript module and CSS which relies on them |
+|-----|------------------------------------------------------------------------------------------------------|
 
 ## Usage
 
@@ -84,19 +84,21 @@ Generates a `figure` tag with an `img` inside and his `noscript` version. The `l
 
 #### Parameters
 
-| **Name**          | **Explanation**                                                                                 |
-|-------------------|-------------------------------------------------------------------------------------------------|
-| path              | Path to the image, used to generate the browser path with LiipImagine                           |
-| srcFilter         | Name of the LiipImagine filter used to generate the path for `data-src`                         |
-| placeholderFilter | Name of the LiipImagine filter used to generate the path for `src`                              |
-| srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`                                |
-| alt               | The text to put in the `alt` attribute of the `img`                                             |
-| imgClass          | Classes to add on the `img`                                                                     |
-| sizes             | Value of the `sizes` attribute (`100vw` if not defined)                                         |
-| figureClass       | Classes to add on the `figure`                                                                  |
-| figcaptionText    | Text of the `figcaption` (if nothing is passed, no `figcaption` will be rendered                |
-| figcaptionClass   | Classes to add on the `figcaption`                                                              |
-| imgImportance     | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information) |
+| Name                 | Explanation                                                                                     |
+|----------------------|-------------------------------------------------------------------------------------------------|
+| path                 | Path to the image, used to generate the browser path with LiipImagine                           |
+| srcFilter            | Name of the LiipImagine filter used to generate the path for `data-src`                         |
+| placeholderFilter    | Name of the LiipImagine filter used to generate the path for `src`                              |
+| srcsetFilters        | A list of LiipImagine filters used to generate the `data-srcset`                                |
+| alt                  | The text to put in the `alt` attribute of the `img`                                             |
+| imgClass             | Classes to add on the `img`                                                                     |
+| sizes                | Value of the `sizes` attribute (`100vw` if not defined)                                         |
+| figureClass          | Classes to add on the `figure`                                                                  |
+| figcaptionText       | Text of the `figcaption` (if nothing is passed, no `figcaption` will be rendered                |
+| figcaptionClass      | Classes to add on the `figcaption`                                                              |
+| imgImportance        | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information) |
+| figureDataAttributes | Raw string passed to add `data-attributes` on the `figure`                                      |
+| imgDataAttributes    | Raw string passed to add `data-attributes` on the `img`                                         |
 
 #### Example
 
@@ -115,7 +117,9 @@ Generates a `figure` tag with an `img` inside and his `noscript` version. The `l
         'class-figure',
         'Figcaption text',
         'class-figcaption',
-        'high'
+        'high',
+        'data-container="a"',
+        'data-image="b" data-test'
       )
   ```
 
@@ -123,7 +127,7 @@ HTML generated
 
   ```html
 
-<figure class="class-figure">
+<figure class="class-figure" data-container="a">
   <img
       alt="image alt"
       class="lazy lazy-placeholder lazy-blur img img--cover img--zoom"
@@ -133,6 +137,7 @@ HTML generated
       data-srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
       width="600" height="400"
       importance="high"
+      data-image="b" data-test
   >
   <noscript>
     <img
@@ -143,6 +148,7 @@ HTML generated
         srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
         width="600" height="400"
         importance="high"
+        data-image="b" data-test
     >
   </noscript>
   <figcaption class="class-figcaption">Figcaption text</figcaption>
@@ -157,18 +163,20 @@ Generates a `figure` tag with an `img` inside.
 
 #### Parameters
 
-| **Name**        | **Explanation**                                                                                 |
-|-----------------|-------------------------------------------------------------------------------------------------|
-| path            | Path to the image, used to generate the browser path with LiipImagine                           |
-| srcFilter       | Name of the LiipImagine filter used to generate the path for `src`                              |
-| srcsetFilters   | A list of LiipImagine filters used to generate the `srcset`                                     |
-| alt             | The text to put in the `alt` attribute of the `img`                                             |
-| imgClass        | Classes to add on the `img`                                                                     |
-| sizes           | Value of the `sizes` attribute (`100vw` if not defined)                                         |
-| figureClass     | Classes to add on the `figure`                                                                  |
-| figcaptionText  | Text of the `figcaption` (if nothing is passed, no `figcaption` will be rendered                |
-| figcaptionClass | Classes to add on the `figcaption`                                                              |
-| imgImportance   | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information) |
+| Name                 | Explanation                                                                                     |
+|----------------------|-------------------------------------------------------------------------------------------------|
+| path                 | Path to the image, used to generate the browser path with LiipImagine                           |
+| srcFilter            | Name of the LiipImagine filter used to generate the path for `src`                              |
+| srcsetFilters        | A list of LiipImagine filters used to generate the `srcset`                                     |
+| alt                  | The text to put in the `alt` attribute of the `img`                                             |
+| imgClass             | Classes to add on the `img`                                                                     |
+| sizes                | Value of the `sizes` attribute (`100vw` if not defined)                                         |
+| figureClass          | Classes to add on the `figure`                                                                  |
+| figcaptionText       | Text of the `figcaption` (if nothing is passed, no `figcaption` will be rendered                |
+| figcaptionClass      | Classes to add on the `figcaption`                                                              |
+| imgImportance        | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information) |
+| figureDataAttributes | Raw string passed to add `data-attributes` on the `figure`                                      |
+| imgDataAttributes    | Raw string passed to add `data-attributes` on the `img`                                         |
 
 #### Example
 
@@ -186,7 +194,9 @@ Generates a `figure` tag with an `img` inside.
         'class-figure',
         'Figcaption text',
         'class-figcaption',
-        'low'
+        'low',
+        'data-container="a"',
+        'data-image="b" data-test'
       )
   ```
 
@@ -203,6 +213,8 @@ HTML generated
       srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
       width="600" height="400"
       importance="low"
+      importance="high"
+      data-image="b" data-test
   >
   <figcaption class="class-figcaption">Figcaption text</figcaption>
 </figure>
@@ -218,17 +230,19 @@ needed. The `lazy` and `lazy-placeholder` classes are add to facilitate the inte
 
 #### Parameters
 
-| **Name**          | **Explanation**                                                                                                                                                                                                                                                                              |
-|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| path              | Path to the image, used to generate the browser path with LiipImagine                                                                                                                                                                                                                        |
-| srcFilter         | Name of the LiipImagine filter used to generate the path for `data-src`                                                                                                                                                                                                                      |
-| placeholderFilter | Name of the LiipImagine filter used to generate the path for `src`                                                                                                                                                                                                                           |
-| srcsetFilters     | A list of LiipImagine filters used to generate the `data-srcset`                                                                                                                                                                                                                             |
-| sources           | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. |
-| alt               | The text to put in the `alt` attribute of the `img`                                                                                                                                                                                                                                          |
-| imgClass          | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
-| pictureClass      | Classes to add on the `picture`                                                                                                                                                                                                                                                              |
-| imgImportance     | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information)                                                                                                                                                                                              |
+| Name                  | Explanation                                                                                                                                                                                                                                                                                  |
+|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| path                  | Path to the image, used to generate the browser path with LiipImagine                                                                                                                                                                                                                        |
+| srcFilter             | Name of the LiipImagine filter used to generate the path for `data-src`                                                                                                                                                                                                                      |
+| placeholderFilter     | Name of the LiipImagine filter used to generate the path for `src`                                                                                                                                                                                                                           |
+| srcsetFilters         | A list of LiipImagine filters used to generate the `data-srcset`                                                                                                                                                                                                                             |
+| sources               | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. |
+| alt                   | The text to put in the `alt` attribute of the `img`                                                                                                                                                                                                                                          |
+| imgClass              | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
+| pictureClass          | Classes to add on the `picture`                                                                                                                                                                                                                                                              |
+| imgImportance         | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information)                                                                                                                                                                                              |
+| pictureDataAttributes | Raw string passed to add `data-attributes` on the `picture`                                                                                                                                                                                                                                  |
+| imgDataAttributes     | Raw string passed to add `data-attributes` on the `img`                                                                                                                                                                                                                                      |
 
 #### Example
 
@@ -252,7 +266,9 @@ needed. The `lazy` and `lazy-placeholder` classes are add to facilitate the inte
       'alt img',
       'img img-fluid',
       'class-picture',
-      'high'
+      'high',
+      'data-picture data-markup="c"',
+      'data-image="d"
     )
   ```
 
@@ -260,9 +276,9 @@ HTML generated
 
   ```html
 
-<picture class="class-picture">
+<picture class="class-picture" data-picture data-markup="c">
   <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w" width="600" height="400">
-  <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w" width="300" height="200">
+  <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w" width="300" height="200">
   <img
       class="img img-fluid"
       alt="alt img"
@@ -271,6 +287,7 @@ HTML generated
       data-srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
       width="600" height="400"
       importance="high"
+      data-image="d"
   >
 </picture>
   ```
@@ -284,15 +301,17 @@ needed.
 
 #### Parameters
 
-| **Name**      | **Explanation**                                                                                                                                                                                                                                                                              |
-|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| path          | Path to the image, used to generate the browser path with LiipImagine                                                                                                                                                                                                                        |
-| srcFilter     | Name of the LiipImagine filter used to generate the path for `src`                                                                                                                                                                                                                           |
-| srcsetFilters | A list of LiipImagine filters used to generate the `srcset`                                                                                                                                                                                                                                  |
-| sources       | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. | | alt | The text to put in the `alt` attribute of the `img` |
-| imgClass      | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
-| pictureClass  | Classes to add on the `picture`                                                                                                                                                                                                                                                              |
-| imgImportance | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information)                                                                                                                                                                                              |
+| Name                  | Explanation                                                                                                                                                                                                                                                                                  |
+|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| path                  | Path to the image, used to generate the browser path with LiipImagine                                                                                                                                                                                                                        |
+| srcFilter             | Name of the LiipImagine filter used to generate the path for `src`                                                                                                                                                                                                                           |
+| srcsetFilters         | A list of LiipImagine filters used to generate the `srcset`                                                                                                                                                                                                                                  |
+| sources               | A list of LiipImagine filters used to generate the `sources` tags. The key of the array is the path to the image and the value can be a list of filters name or, if you need to define a `media` or `sizes` attribute on the source, an array with `filters` and `media` and/or `sizes` key. | | alt | The text to put in the `alt` attribute of the `img` |
+| imgClass              | Classes to add on the `img`                                                                                                                                                                                                                                                                  |
+| pictureClass          | Classes to add on the `picture`                                                                                                                                                                                                                                                              |
+| imgImportance         | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information)                                                                                                                                                                                              |
+| pictureDataAttributes | Raw string passed to add `data-attributes` on the `picture`                                                                                                                                                                                                                                  |
+| imgDataAttributes     | Raw string passed to add `data-attributes` on the `img`                                                                                                                                                                                                                                      |
 
 #### Example
 
@@ -315,7 +334,9 @@ needed.
       'alt img',
       'img img-fluid',
       'class-picture',
-      'low'
+      'low',
+      'data-picture data-markup="c"',
+      'data-image="d"
     )
   ```
 
@@ -323,9 +344,9 @@ HTML generated
 
   ```html
 
-<picture class="class-picture">
+<picture class="class-picture" data-picture data-markup="c">
   <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w" width="600" height="400">
-  <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w" width="300" height="200">
+  <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w" width="300" height="200">
   <img
       class="img img-fluid"
       alt="alt img"
@@ -333,6 +354,7 @@ HTML generated
       srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
       width="600" height="400"
       importance="low"
+      data-image="d"
   >
 </picture>
   ```
@@ -345,10 +367,10 @@ Generates the content of a `srcset` attribute if you wan to use it in your own m
 
 #### Parameters
 
-| **Name**          | **Explanation**                                                        |
-|-------------------|------------------------------------------------------------------------|
-| path              | Path to the image, used to generate the browser path with LiipImagine  |
-| filters           | A list of LiipImagine filters used to generate the `srcset`            |
+| Name    | Explanation                                                           |
+|---------|-----------------------------------------------------------------------|
+| path    | Path to the image, used to generate the browser path with LiipImagine |
+| filters | A list of LiipImagine filters used to generate the `srcset`           |
 
 #### Example
 

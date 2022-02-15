@@ -10,6 +10,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - Add an `imgImportance` option in functions in order to [optimize resource loading](https://web.dev/priority-hints/)
+- Add an `imgDataAttributes` option in functions to pass custom `data-attributes` on the `<img />`
+- Add an `pictureDataAttributes` (or `figureDataAttributes`) option in functions to pass custom `data-attributes` on
+  the `<picture>` (or `<figure>`)
 
 ### Fixed
 

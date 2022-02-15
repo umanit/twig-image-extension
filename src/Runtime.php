@@ -59,7 +59,9 @@ class Runtime
         string $figureClass = '',
         string $figcaptionText = '',
         string $figcaptionClass = '',
-        string $imgImportance = null
+        string $imgImportance = null,
+        string $figureDataAttributes = null,
+        string $imgDataAttributes = null
     ): string {
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
@@ -75,7 +77,7 @@ class Runtime
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
 
         return <<<HTML
-<figure $classFigureHtml $containerDataAttributes>
+<figure $classFigureHtml $figureDataAttributes>
   $nonLazyLoadImgMarkup
   $figcaptionHtml
 </figure>
@@ -93,7 +95,9 @@ HTML;
         string $figureClass = '',
         string $figcaptionText = '',
         string $figcaptionClass = '',
-        string $imgImportance = null
+        string $imgImportance = null,
+        string $figureDataAttributes = null,
+        string $imgDataAttributes = null
     ): string {
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
@@ -102,7 +106,8 @@ HTML;
             $alt,
             $imgClass,
             $sizes,
-            $imgImportance
+            $imgImportance,
+            $imgDataAttributes
         );
         $imgMarkup = $this->getImgMarkup(
             $path,
@@ -112,13 +117,14 @@ HTML;
             $alt,
             $imgClass,
             $sizes,
-            $imgImportance
+            $imgImportance,
+            $imgDataAttributes
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
 
         return <<<HTML
-<figure $classFigureHtml>
+<figure $classFigureHtml $figureDataAttributes>
   $imgMarkup
   <noscript>
     $nonLazyLoadImgMarkup
@@ -136,7 +142,9 @@ HTML;
         string $alt = '',
         string $imgClass = '',
         string $pictureClass = '',
-        string $imgImportance = null
+        string $imgImportance = null,
+        string $pictureDataAttributes = null,
+        string $imgDataAttributes = null
     ): string {
         $sourcesMarkup = $this->getSourcesMarkup($sources, false);
         $imgMarkup = $this->getNonLazyLoadImgMarkup(
@@ -152,7 +160,7 @@ HTML;
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         return <<<HTML
-<picture $classPictureHtml $containerDataAttributes>
+<picture $classPictureHtml $pictureDataAttributes>
   $sourcesMarkup
   $imgMarkup
 </picture>
@@ -168,7 +176,9 @@ HTML;
         string $alt = '',
         string $imgClass = '',
         string $pictureClass = '',
-        string $importance = null
+        string $importance = null,
+        string $pictureDataAttributes = null,
+        string $imgDataAttributes = null
     ): string {
         $sourcesMarkup = $this->getSourcesMarkup($sources, true);
         $imgMarkup = $this->getImgMarkup(
@@ -185,7 +195,7 @@ HTML;
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         return <<<HTML
-<picture $classPictureHtml $containerDataAttributes>
+<picture $classPictureHtml $pictureDataAttributes>
   $sourcesMarkup
   $imgMarkup
 </picture>
@@ -211,7 +221,8 @@ HTML;
         string $alt = '',
         string $imgClass = '',
         string $sizes = null,
-        string $importance = null
+        string $importance = null,
+        string $dataAttributes = null
     ): string {
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('data-srcset="%s"', $this->getImageSrcset($path, $srcsetFilters)) :
@@ -232,6 +243,7 @@ HTML;
     $sizesHtml
     $dimensionHtml
     $importanceHtml
+    $dataAttributes
   />
 HTML;
     }
@@ -243,7 +255,8 @@ HTML;
         string $alt = '',
         string $imgClass = '',
         string $sizes = null,
-        string $importance = null
+        string $importance = null,
+        string $dataAttributes = null
     ): string {
         $classHtml = '' !== $imgClass ? sprintf('class="%s"', $imgClass) : '';
         $srcsetHtml = !empty($srcsetFilters) ?
@@ -263,6 +276,7 @@ HTML;
     $sizesHtml
     $dimensionHtml
     $importanceHtml
+    $dataAttributes
   />
 HTML;
     }
