@@ -247,6 +247,7 @@ needed. The `lazy` and `lazy-placeholder` classes are add to facilitate the inte
 | imgImportance         | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information)                                                                                                                                                                                              |
 | pictureDataAttributes | Raw string passed to add `data-attributes` on the `picture`                                                                                                                                                                                                                                  |
 | imgDataAttributes     | Raw string passed to add `data-attributes` on the `img`                                                                                                                                                                                                                                      |
+| sizes                | Value of the `sizes` attribute (`100vw` if not defined)                                                                                                                                                                                                                                       |
 
 #### Example
 
@@ -272,7 +273,8 @@ needed. The `lazy` and `lazy-placeholder` classes are add to facilitate the inte
       'class-picture',
       'high',
       'data-picture data-markup="c"',
-      'data-image="d"
+      'data-image="d",
+      '(min-width: 768px) 33.3vw, 100vw'
     )
   ```
 
@@ -292,6 +294,7 @@ HTML generated
       width="600" height="400"
       importance="high"
       data-image="d"
+      sizes="(min-width: 768px) 33.3vw, 100vw"
   >
 </picture>
   ```
@@ -316,6 +319,7 @@ needed.
 | imgImportance         | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information)                                                                                                                                                                                              |
 | pictureDataAttributes | Raw string passed to add `data-attributes` on the `picture`                                                                                                                                                                                                                                  |
 | imgDataAttributes     | Raw string passed to add `data-attributes` on the `img`                                                                                                                                                                                                                                      |
+| sizes                 | Value of the `sizes` attribute (`100vw` if not defined)`                                                                                                                                                                                                                                     |
 
 #### Example
 
@@ -340,7 +344,8 @@ needed.
       'class-picture',
       'low',
       'data-picture data-markup="c"',
-      'data-image="d"
+      'data-image="d",
+      '(min-width: 768px) 33.3vw, 100vw'
     )
   ```
 
@@ -359,6 +364,7 @@ HTML generated
       width="600" height="400"
       importance="low"
       data-image="d"
+      sizes="(min-width: 768px) 33.3vw, 100vw"
   >
 </picture>
   ```
