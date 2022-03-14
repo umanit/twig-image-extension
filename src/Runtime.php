@@ -316,7 +316,6 @@ HTML;
             $media = '';
             $sizes = '';
             $srcSet = $this->getImageSrcset($sourcePath, $sourceFilters);
-            $dimensionHtml = $this->getImageDimensions($sourcePath, current($sourceFilters));
 
             if (isset($sourceDataset['media'])) {
                 $media = sprintf('media="%s"', $sourceDataset['media']);
@@ -327,7 +326,7 @@ HTML;
             }
 
             $sourcesHtml[] = <<<HTML
-<source $media $sizes $srcSetAttribute="$srcSet" $dimensionHtml>
+<source $media $sizes $srcSetAttribute="$srcSet">
 HTML;
         }
 
