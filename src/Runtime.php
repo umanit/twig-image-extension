@@ -75,25 +75,38 @@ class Runtime
         string $sizes = '100vw',
         string $figureClass = '',
         string $figcaptionText = '',
-        string $figcaptionClass = ''
+        string $figcaptionClass = '',
+        string $htmlAlt = ''
     ): string {
+        $id = str_replace('.', '', uniqid('', true));
+
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
             $srcFilter,
             $srcsetFilters,
             $alt,
             $imgClass,
-            $sizes
+            $sizes,
+            $htmlAlt,
+            $id
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
 
-        return <<<HTML
+        $html = <<<HTML
 <figure $classFigureHtml>
   $nonLazyLoadImgMarkup
   $figcaptionHtml
 </figure>
 HTML;
+
+        if (!empty($htmlAlt)) {
+            $html .= <<<HTML
+<div class="alt-visually-hidden" id="$id">$htmlAlt</div>
+HTML;
+        }
+
+        return $html;
     }
 
     public function getUmanitImageFigureLazyLoad(
@@ -106,15 +119,20 @@ HTML;
         string $sizes = '100vw',
         string $figureClass = '',
         string $figcaptionText = '',
-        string $figcaptionClass = ''
+        string $figcaptionClass = '',
+        string $htmlAlt = ''
     ): string {
+        $id = str_replace('.', '', uniqid('', true));
+
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
             $srcFilter,
             $srcsetFilters,
             $alt,
             $imgClass,
-            $sizes
+            $sizes,
+            $htmlAlt,
+            $id
         );
         $imgMarkup = $this->getImgMarkup(
             $path,
@@ -123,12 +141,14 @@ HTML;
             $srcsetFilters,
             $alt,
             $imgClass,
-            $sizes
+            $sizes,
+            $htmlAlt,
+            $id
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
 
-        return <<<HTML
+        $html = <<<HTML
 <figure $classFigureHtml>
   $imgMarkup
   <noscript>
@@ -137,6 +157,14 @@ HTML;
   $figcaptionHtml
 </figure>
 HTML;
+
+        if (!empty($htmlAlt)) {
+            $html .= <<<HTML
+<div class="alt-visually-hidden" id="$id">$htmlAlt</div>
+HTML;
+        }
+
+        return $html;
     }
 
     public function getUmanitImagePicture(
@@ -146,18 +174,38 @@ HTML;
         array $sources = [],
         string $alt = '',
         string $imgClass = '',
-        string $pictureClass = ''
+        string $pictureClass = '',
+        string $htmlAlt = ''
     ): string {
+        $id = str_replace('.', '', uniqid('', true));
+
         $sourcesMarkup = $this->getSourcesMarkup($sources, false);
-        $imgMarkup = $this->getNonLazyLoadImgMarkup($path, $srcFilter, $srcsetFilters, $alt, $imgClass);
+        $imgMarkup = $this->getNonLazyLoadImgMarkup(
+            $path,
+            $srcFilter,
+            $srcsetFilters,
+            $alt,
+            $imgClass,
+            null,
+            $htmlAlt,
+            $id
+        );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
-        return <<<HTML
+        $html = <<<HTML
 <picture $classPictureHtml>
   $sourcesMarkup
   $imgMarkup
 </picture>
 HTML;
+
+        if (!empty($htmlAlt)) {
+            $html .= <<<HTML
+<div class="alt-visually-hidden" id="$id">$htmlAlt</div>
+HTML;
+        }
+
+        return $html;
     }
 
     public function getUmanitImagePictureLazyLoad(
@@ -168,18 +216,39 @@ HTML;
         array $sources = [],
         string $alt = '',
         string $imgClass = '',
-        string $pictureClass = ''
+        string $pictureClass = '',
+        string $htmlAlt = ''
     ): string {
+        $id = str_replace('.', '', uniqid('', true));
+
         $sourcesMarkup = $this->getSourcesMarkup($sources, true);
-        $imgMarkup = $this->getImgMarkup($path, $srcFilter, $placeholderFilter, $srcsetFilters, $alt, $imgClass);
+        $imgMarkup = $this->getImgMarkup(
+            $path,
+            $srcFilter,
+            $placeholderFilter,
+            $srcsetFilters,
+            $alt,
+            $imgClass,
+            null,
+            $htmlAlt,
+            $id
+        );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
-        return <<<HTML
+        $html = <<<HTML
 <picture $classPictureHtml>
   $sourcesMarkup
   $imgMarkup
 </picture>
 HTML;
+
+        if (!empty($htmlAlt)) {
+            $html .= <<<HTML
+<div class="alt-visually-hidden" id="$id">$htmlAlt</div>
+HTML;
+        }
+
+        return $html;
     }
 
     public function getUmanitImageSrcset(string $path, array $filters): string
@@ -200,8 +269,17 @@ HTML;
         array $srcsetFilters = [],
         string $alt = '',
         string $imgClass = '',
-        string $sizes = null
+        string $sizes = null,
+        string $htmlAlt = '',
+        string $id = ''
     ): string {
+        $ariaDescribedBy = '';
+
+        if (!empty($htmlAlt)) {
+            $alt = '';
+            $ariaDescribedBy = 'aria-describedby="'.$id.'"';
+        }
+
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('data-srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
             '';
@@ -213,6 +291,7 @@ HTML;
         return <<<HTML
   <img
     alt="$alt"
+    $ariaDescribedBy
     class="{$this->lazyLoadClassSelector} {$this->lazyLoadPlaceholderClassSelector} {$this->lazyBlurClassSelector} $imgClass"
     src="$placeholderPath"
     data-src="$srcPath"
@@ -229,8 +308,17 @@ HTML;
         array $srcsetFilters = [],
         string $alt = '',
         string $imgClass = '',
-        string $sizes = null
+        string $sizes = null,
+        string $htmlAlt = '',
+        string $id = ''
     ): string {
+        $ariaDescribedBy = '';
+
+        if (!empty($htmlAlt)) {
+            $alt = '';
+            $ariaDescribedBy = 'aria-describedby="'.$id.'"';
+        }
+
         $classHtml = '' !== $imgClass ? sprintf('class="%s"', $imgClass) : '';
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('srcset="%s"', $this->getUmanitImageSrcset($path, $srcsetFilters)) :
@@ -242,6 +330,7 @@ HTML;
         return <<<HTML
   <img
     alt="$alt"
+    $ariaDescribedBy
     $classHtml
     src="$srcPath"
     $srcsetHtml
