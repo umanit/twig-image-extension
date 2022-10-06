@@ -152,7 +152,8 @@ HTML;
         string $pictureClass = '',
         string $imgImportance = null,
         string $pictureDataAttributes = null,
-        string $imgDataAttributes = null
+        string $imgDataAttributes = null,
+        string $sizes = '100vw'
     ): string {
         $path = $this->processPath($path);
         $sourcesMarkup = $this->getSourcesMarkup($sources, false);
@@ -162,7 +163,7 @@ HTML;
             $srcsetFilters,
             $alt,
             $imgClass,
-            null,
+            $sizes,
             $imgImportance,
             $imgDataAttributes
         );
@@ -187,7 +188,8 @@ HTML;
         string $pictureClass = '',
         string $importance = null,
         string $pictureDataAttributes = null,
-        string $imgDataAttributes = null
+        string $imgDataAttributes = null,
+        string $sizes = '100vw'
     ): string {
         $path = $this->processPath($path);
         $sourcesMarkup = $this->getSourcesMarkup($sources, true);
@@ -198,7 +200,7 @@ HTML;
             $srcsetFilters,
             $alt,
             $imgClass,
-            null,
+            $sizes,
             $importance,
             $imgDataAttributes
         );
@@ -253,7 +255,7 @@ HTML;
             sprintf('data-srcset="%s"', $this->getImageSrcset($path, $srcsetFilters)) :
             '';
         $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
-        $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
+        $sizesHtml = null !== $sizes ? sprintf('data-sizes="%s"', $sizes) : '';
         $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
         $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
         $importanceHtml = $this->getImportanceHtml($importance);
@@ -316,18 +318,19 @@ HTML;
             $media = '';
             $sizes = '';
             $srcSet = $this->getImageSrcset($sourcePath, $sourceFilters);
-            $dimensionHtml = $this->getImageDimensions($sourcePath, current($sourceFilters));
 
             if (isset($sourceDataset['media'])) {
                 $media = sprintf('media="%s"', $sourceDataset['media']);
             }
 
             if (isset($sourceDataset['sizes'])) {
-                $sizes = sprintf('sizes="%s"', $sourceDataset['sizes']);
+                $sizes = $isLazyLoad ?
+                    sprintf('data-sizes="%s"', $sourceDataset['sizes']) :
+                    sprintf('sizes="%s"', $sourceDataset['sizes']);
             }
 
             $sourcesHtml[] = <<<HTML
-<source $media $sizes $srcSetAttribute="$srcSet" $dimensionHtml>
+<source $media $sizes $srcSetAttribute="$srcSet">
 HTML;
         }
 

@@ -5,6 +5,7 @@ const umanitImageLazyLoad = (yall, loadEventCallback) => {
         load: event => {
           if (!event.target.classList.contains('lazy') && 'IMG' === event.target.nodeName) {
             event.target.classList.remove('lazy-placeholder');
+            event.target.setAttribute('sizes', event.target.dataset.sizes);
           }
 
           if (loadEventCallback) {
