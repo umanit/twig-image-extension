@@ -67,9 +67,12 @@ class Runtime
         string $figcaptionClass = '',
         string $imgImportance = null,
         string $figureDataAttributes = null,
-        string $imgDataAttributes = null
+        string $imgDataAttributes = null,
+        string $htmlAlt = ''
     ): string {
         $path = $this->processPath($path);
+        $id = str_replace('.', '', uniqid('', true));
+
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
             $srcFilter,
@@ -78,17 +81,27 @@ class Runtime
             $imgClass,
             $sizes,
             $imgImportance,
-            $imgDataAttributes
+            $imgDataAttributes,
+            $htmlAlt,
+            $id
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
 
-        return <<<HTML
-<figure $classFigureHtml $figureDataAttributes>
-  $nonLazyLoadImgMarkup
-  $figcaptionHtml
-</figure>
-HTML;
+        $html = <<<HTML
+        <figure $classFigureHtml $figureDataAttributes>
+          $nonLazyLoadImgMarkup
+          $figcaptionHtml
+        </figure>
+        HTML;
+
+        if (!empty($htmlAlt)) {
+            $html .= <<<HTML
+        <div class="alt-visually-hidden" id="$id">$htmlAlt</div>
+        HTML;
+        }
+
+        return $html;
     }
 
     public function getImageFigureLazyLoad(
@@ -104,9 +117,12 @@ HTML;
         string $figcaptionClass = '',
         string $imgImportance = null,
         string $figureDataAttributes = null,
-        string $imgDataAttributes = null
+        string $imgDataAttributes = null,
+        string $htmlAlt = ''
     ): string {
         $path = $this->processPath($path);
+        $id = str_replace('.', '', uniqid('', true));
+
         $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
             $srcFilter,
@@ -115,8 +131,11 @@ HTML;
             $imgClass,
             $sizes,
             $imgImportance,
-            $imgDataAttributes
+            $imgDataAttributes,
+            $htmlAlt,
+            $id
         );
+
         $imgMarkup = $this->getImgMarkup(
             $path,
             $srcFilter,
@@ -126,20 +145,30 @@ HTML;
             $imgClass,
             $sizes,
             $imgImportance,
-            $imgDataAttributes
+            $imgDataAttributes,
+            $htmlAlt,
+            $id
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
 
-        return <<<HTML
-<figure $classFigureHtml $figureDataAttributes>
-  $imgMarkup
-  <noscript>
-    $nonLazyLoadImgMarkup
-  </noscript>
-  $figcaptionHtml
-</figure>
-HTML;
+        $html = <<<HTML
+        <figure $classFigureHtml $figureDataAttributes>
+          $imgMarkup
+          <noscript>
+            $nonLazyLoadImgMarkup
+          </noscript>
+          $figcaptionHtml
+        </figure>
+        HTML;
+
+        if (!empty($htmlAlt)) {
+            $html .= <<<HTML
+        <div class="alt-visually-hidden" id="$id">$htmlAlt</div>
+        HTML;
+        }
+
+        return $html;
     }
 
     public function getImagePicture(
@@ -152,9 +181,12 @@ HTML;
         string $pictureClass = '',
         string $imgImportance = null,
         string $pictureDataAttributes = null,
-        string $imgDataAttributes = null
+        string $imgDataAttributes = null,
+        string $htmlAlt = ''
     ): string {
         $path = $this->processPath($path);
+        $id = str_replace('.', '', uniqid('', true));
+
         $sourcesMarkup = $this->getSourcesMarkup($sources, false);
         $imgMarkup = $this->getNonLazyLoadImgMarkup(
             $path,
@@ -169,11 +201,25 @@ HTML;
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         return <<<HTML
-<picture $classPictureHtml $pictureDataAttributes>
-  $sourcesMarkup
-  $imgMarkup
-</picture>
-HTML;
+        <picture $classPictureHtml $pictureDataAttributes>
+                    $htmlAlt,
+                    $id
+                );
+                $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
+        
+        <picture $classPictureHtml>
+          $sourcesMarkup
+          $imgMarkup
+        </picture>
+        HTML;
+
+        if (!empty($htmlAlt)) {
+            $html .= <<<HTML
+            <div class="alt-visually-hidden" id="$id">$htmlAlt</div>
+            HTML;
+        }
+
+        return $html;
     }
 
     public function getImagePictureLazyLoad(
@@ -187,9 +233,12 @@ HTML;
         string $pictureClass = '',
         string $importance = null,
         string $pictureDataAttributes = null,
-        string $imgDataAttributes = null
+        string $imgDataAttributes = null,
+        string $htmlAlt = ''
     ): string {
         $path = $this->processPath($path);
+        $id = str_replace('.', '', uniqid('', true));
+
         $sourcesMarkup = $this->getSourcesMarkup($sources, true);
         $imgMarkup = $this->getImgMarkup(
             $path,
@@ -204,12 +253,26 @@ HTML;
         );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
-        return <<<HTML
-<picture $classPictureHtml $pictureDataAttributes>
-  $sourcesMarkup
-  $imgMarkup
-</picture>
-HTML;
+        $html = <<<HTML
+        <picture $classPictureHtml $pictureDataAttributes>
+                    $htmlAlt,
+                    $id
+                );
+                $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
+        
+        <picture $classPictureHtml>
+          $sourcesMarkup
+          $imgMarkup
+        </picture>
+        HTML;
+
+        if (!empty($htmlAlt)) {
+            $html .= <<<HTML
+        <div class="alt-visually-hidden" id="$id">$htmlAlt</div>
+        HTML;
+        }
+
+        return $html;
     }
 
     public function getImageSrcset(?string $path, array $filters): string
@@ -247,8 +310,17 @@ HTML;
         string $imgClass = '',
         string $sizes = null,
         string $importance = null,
-        string $dataAttributes = null
+        string $dataAttributes = null,
+        string $htmlAlt = '',
+        string $id = ''
     ): string {
+        $ariaDescribedBy = '';
+
+        if (!empty($htmlAlt)) {
+            $alt = '';
+            $ariaDescribedBy = 'aria-describedby="'.$id.'"';
+        }
+
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('data-srcset="%s"', $this->getImageSrcset($path, $srcsetFilters)) :
             '';
@@ -261,6 +333,7 @@ HTML;
         return <<<HTML
   <img
     alt="$alt"
+    $ariaDescribedBy
     class="{$this->lazyLoadClassSelector} {$this->lazyLoadPlaceholderClassSelector} {$this->lazyBlurClassSelector} $imgClass"
     src="$placeholderPath"
     data-src="$srcPath"
@@ -281,8 +354,17 @@ HTML;
         string $imgClass = '',
         string $sizes = null,
         string $importance = null,
-        string $dataAttributes = null
+        string $dataAttributes = null,
+        string $htmlAlt = '',
+        string $id = ''
     ): string {
+        $ariaDescribedBy = '';
+
+        if (!empty($htmlAlt)) {
+            $alt = '';
+            $ariaDescribedBy = 'aria-describedby="'.$id.'"';
+        }
+
         $classHtml = '' !== $imgClass ? sprintf('class="%s"', $imgClass) : '';
         $srcsetHtml = !empty($srcsetFilters) ?
             sprintf('srcset="%s"', $this->getImageSrcset($path, $srcsetFilters)) :
@@ -295,6 +377,7 @@ HTML;
         return <<<HTML
   <img
     alt="$alt"
+    $ariaDescribedBy
     $classHtml
     src="$srcPath"
     $srcsetHtml

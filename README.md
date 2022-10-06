@@ -80,6 +80,8 @@ explained in the [Configuration](#configuration) part.
 (except for `downscale` and `upscale` filters, which fallback to the original image size). By doing this, sudden layout
 shifts are avoided for a better user experience.
 
+To use `htmlAlt`, the css file `umanit-alt-text.css` must be loaded. It hides the `div` used to display the html alt content.
+
 ### umanit_image_figure_lazy_load
 
 Generates a `figure` tag with an `img` inside and his `noscript` version. The `lazy`,
@@ -88,27 +90,29 @@ Generates a `figure` tag with an `img` inside and his `noscript` version. The `l
 
 #### Parameters
 
-| Name                 | Explanation                                                                                     |
-|----------------------|-------------------------------------------------------------------------------------------------|
-| path                 | Path to the image, used to generate the browser path with LiipImagine                           |
-| srcFilter            | Name of the LiipImagine filter used to generate the path for `data-src`                         |
-| placeholderFilter    | Name of the LiipImagine filter used to generate the path for `src`                              |
-| srcsetFilters        | A list of LiipImagine filters used to generate the `data-srcset`                                |
-| alt                  | The text to put in the `alt` attribute of the `img`                                             |
-| imgClass             | Classes to add on the `img`                                                                     |
-| sizes                | Value of the `sizes` attribute (`100vw` if not defined)                                         |
-| figureClass          | Classes to add on the `figure`                                                                  |
-| figcaptionText       | Text of the `figcaption` (if nothing is passed, no `figcaption` will be rendered                |
-| figcaptionClass      | Classes to add on the `figcaption`                                                              |
-| imgImportance        | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information) |
-| figureDataAttributes | Raw string passed to add `data-attributes` on the `figure`                                      |
-| imgDataAttributes    | Raw string passed to add `data-attributes` on the `img`                                         |
+| Name                 | Explanation                                                                                                                                |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| path                 | Path to the image, used to generated the browser path with LiipImagine                                                                     |
+| srcFilter            | Name of the LiipImagine filter used to generate the path for `data-src`                                                                    |
+| placeholderFilter    | Name of the LiipImagine filter used to generate the path for `src`                                                                         |
+| srcsetFilters        | A list of LiipImagine filters used to generate the `data-srcset`                                                                           |
+| alt                  | The text to put in the `alt` attribute of the `img`                                                                                        |
+| imgClass             | Classes to add on the `img`                                                                                                                |
+| sizes                | Value of the `sizes` attribute (`100vw` if not defined)                                                                                    |
+| figureClass          | Classes to add on the `figure`                                                                                                             |
+| figcaptionText       | Text of the `figcaption` (if nothing is passed, no `figcaption` will be rendered)                                                          |
+| figcaptionClass      | Classes to add on the `figcaption`                                                                                                         |
+| imgImportance        | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information)                                            |
+| figureDataAttributes | Raw string passed to add `data-attributes` on the `figure`                                                                                 |
+| imgDataAttributes    | Raw string passed to add `data-attributes` on the `img`                                                                                    |
+| htmlAlt              | The html to put in a div referenced by the `aria-describedby` of the `img`. If given a non-empty value, the `alt` attribute vill be empty. |
 
 #### Example
 
 <details>
   <summary>Click to show</summary>
 
+##### Without htmlAlt
   ```twig
       umanit_image_figure_lazy_load(
         image.path,
@@ -159,6 +163,54 @@ HTML generated
 </figure>
   ```
 
+##### With htmlAlt
+  ```twig
+      umanit_image_figure_lazy_load(
+        image.path,
+        'small_thumbnail',
+        'tiny_thumbnail',
+        ['thumbnail', 'large_thumbnail'],
+        'image alt',
+        'img img--cover img--zoom',
+        '(min-width: 768px) 33.3vw, 100vw',
+        'class-figure',
+        'Figcaption text',
+        'class-figcaption',
+        '<p>Html to describe content</p>'
+      )
+  ```
+
+HTML generated
+
+  ```html
+  <figure class="class-figure">
+    <img
+      alt=""
+      aria-describedby="1234567890"
+      class="lazy lazy-placeholder lazy-blur img img--cover img--zoom"
+      src="https://domain.tld/media/cache/tiny_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+      data-src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+      sizes="(min-width: 768px) 33.3vw, 100vw"
+      data-srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
+      width="600" height="400"
+    >
+    <noscript>
+      <img
+        class="img img--cover img--zoom"
+        alt=""
+        aria-describedby="1234567890"
+        src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+        sizes="(min-width: 768px) 33.3vw, 100vw"
+        srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
+        width="600" height="400"
+      >
+    </noscript>
+    <figcaption class="class-figcaption">Figcaption text</figcaption>
+  </figure>
+  <div id="1234567890"><p>Html to describe content</p></div>
+  ```
+
+The id used for `aria-describedby` is a random dynamically generated value.
 </details>
 
 ### umanit_image_figure
@@ -167,26 +219,28 @@ Generates a `figure` tag with an `img` inside.
 
 #### Parameters
 
-| Name                 | Explanation                                                                                     |
-|----------------------|-------------------------------------------------------------------------------------------------|
-| path                 | Path to the image, used to generate the browser path with LiipImagine                           |
-| srcFilter            | Name of the LiipImagine filter used to generate the path for `src`                              |
-| srcsetFilters        | A list of LiipImagine filters used to generate the `srcset`                                     |
-| alt                  | The text to put in the `alt` attribute of the `img`                                             |
-| imgClass             | Classes to add on the `img`                                                                     |
-| sizes                | Value of the `sizes` attribute (`100vw` if not defined)                                         |
-| figureClass          | Classes to add on the `figure`                                                                  |
-| figcaptionText       | Text of the `figcaption` (if nothing is passed, no `figcaption` will be rendered                |
-| figcaptionClass      | Classes to add on the `figcaption`                                                              |
-| imgImportance        | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information) |
-| figureDataAttributes | Raw string passed to add `data-attributes` on the `figure`                                      |
-| imgDataAttributes    | Raw string passed to add `data-attributes` on the `img`                                         |
+| Name                 | Explanation                                                                                                                                |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
+| path                 | Path to the image, used to generated the browser path with LiipImagine                                                                     |
+| srcFilter            | Name of the LiipImagine filter used to generate the path for `src`                                                                         |
+| srcsetFilters        | A list of LiipImagine filters used to generate the `srcset`                                                                                |
+| alt                  | The text to put in the `alt` attribute of the `img`                                                                                        |
+| imgClass             | Classes to add on the `img`                                                                                                                |
+| sizes                | Value of the `sizes` attribute (`100vw` if not defined)                                                                                    |
+| figureClass          | Classes to add on the `figure`                                                                                                             |
+| figcaptionText       | Text of the `figcaption` (if nothing is passed, no `figcaption` will be rendered                                                           |
+| figcaptionClass      | Classes to add on the `figcaption`                                                                                                         |
+| imgImportance        | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information)                                            |
+| figureDataAttributes | Raw string passed to add `data-attributes` on the `figure`                                                                                 |
+| imgDataAttributes    | Raw string passed to add `data-attributes` on the `img`                                                                                    |
+| htmlAlt              | The html to put in a div referenced by the `aria-describedby` of the `img`. If given a non-empty value, the `alt` attribute vill be empty. |
 
 #### Example
 
 <details>
   <summary>Click to show</summary>
 
+##### Without htmlAlt
   ```twig
       umanit_image_figure(
         image.path,
@@ -224,6 +278,41 @@ HTML generated
 </figure>
   ```
 
+##### With htmlAlt
+ ```twig
+      umanit_image_figure(
+        image.path,
+        'small_thumbnail',
+        ['thumbnail', 'large_thumbnail'],
+        'image alt',
+        'img img--cover img--zoom',
+        '(min-width: 768px) 33.3vw, 100vw',
+        'class-figure',
+        'Figcaption text',
+        'class-figcaption',
+        '<p>Html to describe content</p>'
+      )
+  ```
+
+HTML generated
+
+  ```html
+  <figure class="class-figure">
+    <img
+      alt=""
+      aria-describedby="1234567890"
+      class="lazy lazy-placeholder lazy-blur img img--cover img--zoom"
+      src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+      sizes="(min-width: 768px) 33.3vw, 100vw"
+      srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
+      width="600" height="400"
+    >
+    <figcaption class="class-figcaption">Figcaption text</figcaption>
+  </figure>
+  <div id="1234567890"><p>Html to describe content</p></div>
+  ```
+
+The id used for `aria-describedby` is a random dynamically generated value.
 </details>
 
 ### umanit_image_picture_lazy_load
@@ -247,12 +336,14 @@ needed. The `lazy` and `lazy-placeholder` classes are add to facilitate the inte
 | imgImportance         | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information)                                                                                                                                                                                              |
 | pictureDataAttributes | Raw string passed to add `data-attributes` on the `picture`                                                                                                                                                                                                                                  |
 | imgDataAttributes     | Raw string passed to add `data-attributes` on the `img`                                                                                                                                                                                                                                      |
+| htmlAlt               | The html to put in a div referenced by the `aria-describedby` of the `img`. If given a non-empty value, the `alt` attribute vill be empty.                                                                                                                                                   |
 
 #### Example
 
 <details>
   <summary>Click to show</summary>
 
+##### Without htmlAlt
   ```twig
     umanit_image_picture_lazy_load(
       image.path,
@@ -296,6 +387,48 @@ HTML generated
 </picture>
   ```
 
+##### With htmlAlt
+  ```twig
+    umanit_image_picture_lazy_load(
+      image.path,
+      'small_thumbnail',
+      'tiny_thumbnail',
+      ['thumbnail', 'large_thumbnail'],
+      {
+        (image.path): {
+          'media': '(min-width: 768px)',
+          'sizes': '(min-width: 1400px) 25vw, 50vw',
+          'filters': ['thumbnail', 'large_thumbnail']
+        },
+        (image2.path): ['thumbnail', 'large_thumbnail']
+      },
+      'alt img',
+      'img img-fluid',
+      'class-picture',
+      '<p>Html to describe content</p>'
+    )
+  ```
+
+HTML generated
+
+  ```html
+  <picture class="class-picture">
+    <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w" width="600" height="400">
+    <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w" width="300" height="200">
+    <img
+      class="img img-fluid"
+      alt=""
+      aria-describedby="1234567890"
+      src="https://domain.tld/media/cache/tiny_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+      data-src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+      data-srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
+      width="600" height="400"
+    >
+  </picture>
+  <div id="1234567890"><p>Html to describe content</p></div>
+  ```
+
+The id used for `aria-describedby` is a random dynamically generated value.
 </details>
 
 ### umanit_image_picture
@@ -316,12 +449,14 @@ needed.
 | imgImportance         | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information)                                                                                                                                                                                              |
 | pictureDataAttributes | Raw string passed to add `data-attributes` on the `picture`                                                                                                                                                                                                                                  |
 | imgDataAttributes     | Raw string passed to add `data-attributes` on the `img`                                                                                                                                                                                                                                      |
+| htmlAlt               | The html to put in a div referenced by the `aria-describedby` of the `img`. If given a non-empty value, the `alt` attribute vill be empty.                                                                                                                                                   |
 
 #### Example
 
 <details>
   <summary>Click to show</summary>
 
+##### Without htmlAlt
   ```twig
     umanit_image_picture(
       image.path,
@@ -363,6 +498,44 @@ HTML generated
 </picture>
   ```
 
+##### With htmlAlt
+  ```twig
+    umanit_image_picture(
+      image.path,
+      'small_thumbnail',
+      ['thumbnail', 'large_thumbnail'],
+      {
+        (image.path): {
+          'media': '(min-width: 768px)',
+          'sizes': '(min-width: 1400px) 25vw, 50vw',
+          'filters': ['thumbnail', 'large_thumbnail']
+        },
+        (image2.path): ['thumbnail', 'large_thumbnail']
+      },
+      'alt img',
+      'img img-fluid',
+      'class-picture',
+      '<p>Html to describe content</p>'
+    )
+  ```
+
+HTML generated
+
+  ```html
+  <picture class="class-picture">
+    <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w" width="600" height="400">
+    <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w" width="300" height="200">
+    <img
+      class="img img-fluid"
+      alt=""
+      aria-describedby="1234567890"
+      src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+      srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
+      width="600" height="400"
+    >
+  </picture>
+  <div id="1234567890"><p>Html to describe content</p></div>
+  ```
 </details>
 
 ### umanit_image_srcset
