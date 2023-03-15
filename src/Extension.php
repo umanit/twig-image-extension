@@ -33,8 +33,13 @@ class Extension extends AbstractExtension
                 ['is_safe' => ['html']]
             ),
             new TwigFunction(
+                'umanit_image_img',
+                [Runtime::class, 'getImgMarkup'],
+                ['is_safe' => ['html']]
+            ),
+            new TwigFunction(
                 'umanit_image_srcset',
-                [Runtime::class, 'getImageSrcset'],
+                [Runtime::class, 'getSrcset'],
                 ['is_safe' => ['html']]
             ),
         ];

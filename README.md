@@ -1,11 +1,11 @@
 # UmanIT - Twig Image Extension
 
-This Twig extension facilitate the integration of responsive images' markup in Twig templates.
+This Twig extension facilitates the integration of responsive images markup in Twig templates.
 
-It use [LiipImagineBundle](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/index.html) and his filters to generate
+It uses [LiipImagineBundle](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/index.html) and its filters to generate
 HTML markup with all you need to handle responsive images.
 
-It also provide a javascript module to automatically instantiate [yall.js](https://github.com/malchata/yall.js/) on
+It also provides a JavaScript module to automatically instantiate [yall.js](https://github.com/malchata/yall.js/) on
 rendered images.
 
 ## Installation
@@ -28,7 +28,7 @@ return [
 ];
 ```
 
-(Optionnal) Install bundle assets if you want to use the javascript module for
+(Optional) Install bundle assets if you want to use the javascript module for
 [yall.js](https://github.com/malchata/yall.js/):
 
 ```bash
@@ -45,16 +45,33 @@ umanit_twig_image:
     blur_class_selector: lazy-blur
 ```
 
+Some functions render HTML markup with the ability to use lazy loading on images. It's possible to customize the classes
+used with the 3 options `class_selector`, `placeholder_class_selector` and `blur_class_selector`.
+
+| ⚠   | If you customize classes, you cannot use the javascript module and CSS that rely on them anymore |
+|-----|--------------------------------------------------------------------------------------------------|
+
+### Fallback images
+
 By default, if the image path given in functions calls is null or empty, an exception is thrown. If you use the default
 image mecanism of Liip (see
 [the configuration of the bundle](https://symfony.com/bundles/LiipImagineBundle/current/configuration.html)), you can
 use it as a fallback for your calls. To do so, you need to change `use_liip_default_image` to `true`.
 
-Some functions render HTML markup with ability to use lazy loading on images. It's possible to customize the classes
-used with the 3 options `class_selector`, `placeholder_class_selector` and `blur_class_selector`.
+#### In dev environments
 
-| ⚠   | If you customize classes, you can not use anymore the javascript module and CSS which relies on them |
-|-----|------------------------------------------------------------------------------------------------------|
+If the path given leads to an image that is missing on the server, a default image will be rendered instead.
+The default images are available in four sizes:
+- small: 320px wide
+- medium: 640 wide
+- large: 1280px wide
+- extra large: 2560px wide (for Retina screens mostly)
+
+If a default image needs to be rendered, the size will be guessed using the given Liip filter:
+- a filter ending with `2x` will give you an extra large default image
+- a filter ending with `xl` or `xxl` will give you a large default image
+- a filter ending with `xs` or `xxs` will give you a small default image
+- any other filter name will default to the medium size
 
 ## Usage
 
@@ -64,13 +81,14 @@ The following Twig functions are available in your templates.
 1. [umanit_image_figure](#umanit_image_figure)
 1. [umanit_image_picture_lazy_load](#umanit_image_picture_lazy_load)
 1. [umanit_image_picture](#umanit_image_picture)
+1. [umanit_image_img](#umanit_image_srcset)
 1. [umanit_image_srcset](#umanit_image_srcset)
 1. [(Optional) Javascript module to instantiate yall.js](#optional-javascript-module-to-instantiate-yalljs)
 1. [(Optional) Import CSS files for blur effect on yall.js lazy images](#optional-import-css-files-for-blur-effect-on-yalljs-lazy-images)
 
 When a [LiipImagine filter](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/filters.html#built-in-filters) is
-used, the extension will read his configuration and automatically takes the right width or height to apply in the
-markup. If it's not possible, the extension try to get the original image dimensions instead. In both case, the result
+used, the extension will read its configuration and automatically guess the right width or height to apply in the
+markup. If it's not possible, the extension will try to get the original image dimensions instead. In both case, the result
 is saved in cache to avoid multiple process for the same image.
 
 When the used function is for lazy load, `lazy` and `lazy-placeholder` classes are used but can be customized as
@@ -127,7 +145,7 @@ Generates a `figure` tag with an `img` inside and his `noscript` version. The `l
       )
   ```
 
-HTML generated
+HTML generated:
 
   ```html
 
@@ -204,14 +222,14 @@ Generates a `figure` tag with an `img` inside.
       )
   ```
 
-HTML generated
+HTML generated:
 
   ```html
 
-<figure class="class-figure">
+<figure class="class-figure" data-container="a">
   <img
       alt="image alt"
-      class="lazy lazy-placeholder lazy-blur img img--cover img--zoom"
+      class="img img--cover img--zoom"
       src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
       sizes="(min-width: 768px) 33.3vw, 100vw"
       srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
@@ -365,6 +383,58 @@ HTML generated
 
 </details>
 
+### umanit_image_img
+
+Generates an `img` tag.
+
+#### Parameters
+
+| Name              | Explanation                                                                                     |
+|-------------------|-------------------------------------------------------------------------------------------------|
+| path              | Path to the image, used to generate the browser path with LiipImagine                           |
+| srcFilter         | Name of the LiipImagine filter used to generate the path for `src`                              |
+| srcsetFilters     | A list of LiipImagine filters used to generate the `srcset`                                     |
+| alt               | The text to put in the `alt` attribute of the `img`                                             |
+| imgClass          | Classes to add on the `img`                                                                     |
+| sizes             | Value of the `sizes` attribute (`100vw` if not defined)                                         |
+| importance        | Importance of the image (see [this link](https://web.dev/priority-hints/) for more information) |
+| imgDataAttributes | Raw string passed to add `data-attributes` on the `img`                                         |
+
+#### Example
+
+<details>
+  <summary>Click to show</summary>
+
+  ```twig
+      umanit_image_img(
+        image.path,
+        'small_thumbnail',
+        ['thumbnail', 'large_thumbnail'],
+        'image alt',
+        'img img--cover img--zoom',
+        '(min-width: 768px) 33.3vw, 100vw',
+        'low',
+        'data-image="b" data-test'
+      )
+  ```
+
+HTML generated:
+
+  ```html
+  <img
+      alt="image alt"
+      class="img img--cover img--zoom"
+      src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+      sizes="(min-width: 768px) 33.3vw, 100vw"
+      srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
+      width="600" height="400"
+      importance="low"
+      data-image="b" data-test
+  >
+  ```
+
+</details>
+
 ### umanit_image_srcset
 
 Generates the content of a `srcset` attribute if you wan to use it in your own markup.
@@ -409,7 +479,6 @@ import yall from 'yall-js';
 import umanitImageLazyLoad from '../../public/bundles/umanittwigimage/js/umanit-image-lazy-loading';
 
 umanitImageLazyLoad(yall);
-
 ```
 
 ### (Optional) Import CSS files for blur effect on yall.js lazy images
@@ -417,7 +486,7 @@ umanitImageLazyLoad(yall);
 You can import the CSS file for adding a blur effect on lazy images.
 
 ```twig
-<link rel="stylesheet" href="{{ asset('bundles/umanittwigimage/css/umanit-image-lazy-loading.css') }}">
+<link rel="stylesheet" href="{{ asset('css/umanit-image-lazy-loading.css', 'twig_image_bundle') }}">
 ```
 
 Example in webpack
