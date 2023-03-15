@@ -1,0 +1,5 @@
+framework:
+    assets:
+        packages:
+            twig_image_bundle:
+                base_path: 'bundles/umanittwigimage/'

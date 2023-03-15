@@ -7,6 +7,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- New Twig function `umanit_image_img`, to generate an `<img>` tag markup
+- In dev environments, leverages the data manager from Liip and its configured loader(s) to check if the image file exists.
+  If it doesn't, renders a default image in one of four sizes (resolved by analyzing the filter name)
+- Adds a `FallbackImageResolver` to resolve which default image to render
+- Adds an asset package definition (`twig_image_bundle`)
+
+### Fixed
+
+- In dev environments, catches `NotLoadableException` from Liip and uses a default image instead to build the tag
+
 ## [1.1.1] - 2022-02-15
 
 ### Added
