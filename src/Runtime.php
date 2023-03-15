@@ -39,7 +39,7 @@ class Runtime
         bool $useLiipDefaultImage,
         ?string $liipDefaultImage,
         string $env,
-        FallbackImageResolver $FallbackImageResolver
+        FallbackImageResolver $fallbackImageResolver
     ) {
         $this->cache = $cache;
         $this->cacheManager = $cacheManager;
@@ -49,7 +49,7 @@ class Runtime
         $this->useLiipDefaultImage = $useLiipDefaultImage;
         $this->liipDefaultImage = $liipDefaultImage;
         $this->env = $env;
-        $this->fallbackImageResolver = $FallbackImageResolver;
+        $this->fallbackImageResolver = $fallbackImageResolver;
     }
 
     public function setLazyLoadConfiguration(
@@ -85,7 +85,7 @@ class Runtime
             $imgClass,
             $sizes,
             $imgImportance,
-            $imgDataAttributes,
+            $imgDataAttributes
         );
 
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
