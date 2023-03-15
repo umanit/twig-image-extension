@@ -28,7 +28,7 @@ class Runtime
     private bool $useLiipDefaultImage;
     private ?string $liipDefaultImage;
     private string $env;
-    private FallbackImageResolver $FallbackImageResolver;
+    private FallbackImageResolver $fallbackImageResolver;
 
     public function __construct(
         CacheInterface $cache,
@@ -39,7 +39,7 @@ class Runtime
         bool $useLiipDefaultImage,
         ?string $liipDefaultImage,
         string $env,
-        FallbackImageResolver $FallbackImageResolver
+        FallbackImageResolver $fallbackImageResolver
     ) {
         $this->cache = $cache;
         $this->cacheManager = $cacheManager;
@@ -49,7 +49,7 @@ class Runtime
         $this->useLiipDefaultImage = $useLiipDefaultImage;
         $this->liipDefaultImage = $liipDefaultImage;
         $this->env = $env;
-        $this->fallbackImageResolver = $FallbackImageResolver;
+        $this->fallbackImageResolver = $fallbackImageResolver;
     }
 
     public function setLazyLoadConfiguration(
@@ -204,11 +204,11 @@ class Runtime
             null,
             $imgImportance,
             $imgDataAttributes,
-            true
+            $htmlAlt
         );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
-        return <<<HTML
+        $html = <<<HTML
         <picture $classPictureHtml $pictureDataAttributes>
                     $htmlAlt,
                     $id
@@ -299,7 +299,7 @@ class Runtime
 
         if (!empty($htmlAlt)) {
             $alt = '';
-            $ariaDescribedBy = 'aria-describedby="'.$id.'"';
+            $ariaDescribedBy = 'aria-describedby="' . $id . '"';
         }
 
         $path = $this->processPath($path, $srcFilter);
@@ -387,7 +387,7 @@ HTML;
 
         if (!empty($htmlAlt)) {
             $alt = '';
-            $ariaDescribedBy = 'aria-describedby="'.$id.'"';
+            $ariaDescribedBy = 'aria-describedby="' . $id . '"';
         }
 
         $srcsetHtml = !empty($srcsetFilters) ?

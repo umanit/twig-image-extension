@@ -81,7 +81,7 @@ The following Twig functions are available in your templates.
 1. [umanit_image_figure](#umanit_image_figure)
 1. [umanit_image_picture_lazy_load](#umanit_image_picture_lazy_load)
 1. [umanit_image_picture](#umanit_image_picture)
-1. [umanit_image_img](#umanit_image_srcset)
+1. [umanit_image_img](#umanit_image_img)
 1. [umanit_image_srcset](#umanit_image_srcset)
 1. [(Optional) Javascript module to instantiate yall.js](#optional-javascript-module-to-instantiate-yalljs)
 1. [(Optional) Import CSS files for blur effect on yall.js lazy images](#optional-import-css-files-for-blur-effect-on-yalljs-lazy-images)
