@@ -15,4 +15,12 @@ services:
             - '@liip_imagine'
             - '%umanit_twig_image.use_liip_default_image%'
             - '%liip_imagine.default_image%'
+            - '%kernel.environment%'
+            - '@umanit_twig_image.default_image_resolver'
         tags: ['twig.runtime']
+
+    umanit_twig_image.default_image_resolver:
+        class: Umanit\TwigImage\FallbackImageResolver
+        public: false
+        arguments:
+            - '@assets.packages'

@@ -9,6 +9,7 @@ use Imagine\Image\BoxInterface;
 use Imagine\Image\ImageInterface;
 use Imagine\Image\ImagineInterface;
 use Liip\ImagineBundle\Binary\FileBinaryInterface;
+use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Liip\ImagineBundle\Imagine\Data\DataManager;
 use Liip\ImagineBundle\Imagine\Filter\FilterManager;
@@ -26,6 +27,8 @@ class Runtime
     private ImagineInterface $imagine;
     private bool $useLiipDefaultImage;
     private ?string $liipDefaultImage;
+    private string $env;
+    private FallbackImageResolver $FallbackImageResolver;
 
     public function __construct(
         CacheInterface $cache,
@@ -34,7 +37,9 @@ class Runtime
         DataManager $dataManager,
         ImagineInterface $imagine,
         bool $useLiipDefaultImage,
-        ?string $liipDefaultImage
+        ?string $liipDefaultImage,
+        string $env,
+        FallbackImageResolver $FallbackImageResolver
     ) {
         $this->cache = $cache;
         $this->cacheManager = $cacheManager;
@@ -43,6 +48,8 @@ class Runtime
         $this->imagine = $imagine;
         $this->useLiipDefaultImage = $useLiipDefaultImage;
         $this->liipDefaultImage = $liipDefaultImage;
+        $this->env = $env;
+        $this->fallbackImageResolver = $FallbackImageResolver;
     }
 
     public function setLazyLoadConfiguration(
@@ -70,10 +77,10 @@ class Runtime
         string $imgDataAttributes = null,
         string $htmlAlt = ''
     ): string {
-        $path = $this->processPath($path);
+        $path = $this->processPath($path, $srcFilter);
         $id = str_replace('.', '', uniqid('', true));
 
-        $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
+        $nonLazyLoadImgMarkup = $this->getImageImg(
             $path,
             $srcFilter,
             $srcsetFilters,
@@ -85,6 +92,7 @@ class Runtime
             $htmlAlt,
             $id
         );
+
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
 
@@ -120,10 +128,10 @@ class Runtime
         string $imgDataAttributes = null,
         string $htmlAlt = ''
     ): string {
-        $path = $this->processPath($path);
+        $path = $this->processPath($path, $srcFilter);
         $id = str_replace('.', '', uniqid('', true));
 
-        $nonLazyLoadImgMarkup = $this->getNonLazyLoadImgMarkup(
+        $nonLazyLoadImgMarkup = $this->getImageImg(
             $path,
             $srcFilter,
             $srcsetFilters,
@@ -135,8 +143,7 @@ class Runtime
             $htmlAlt,
             $id
         );
-
-        $imgMarkup = $this->getImgMarkup(
+        $imgMarkup = $this->getImageImgLazyLoad(
             $path,
             $srcFilter,
             $placeholderFilter,
@@ -184,11 +191,11 @@ class Runtime
         string $imgDataAttributes = null,
         string $htmlAlt = ''
     ): string {
-        $path = $this->processPath($path);
+        $path = $this->processPath($path, $srcFilter);
         $id = str_replace('.', '', uniqid('', true));
 
         $sourcesMarkup = $this->getSourcesMarkup($sources, false);
-        $imgMarkup = $this->getNonLazyLoadImgMarkup(
+        $imgMarkup = $this->getImageImg(
             $path,
             $srcFilter,
             $srcsetFilters,
@@ -196,7 +203,8 @@ class Runtime
             $imgClass,
             null,
             $imgImportance,
-            $imgDataAttributes
+            $imgDataAttributes,
+            true
         );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
@@ -236,11 +244,11 @@ class Runtime
         string $imgDataAttributes = null,
         string $htmlAlt = ''
     ): string {
-        $path = $this->processPath($path);
+        $path = $this->processPath($path, $srcFilter);
         $id = str_replace('.', '', uniqid('', true));
 
         $sourcesMarkup = $this->getSourcesMarkup($sources, true);
-        $imgMarkup = $this->getImgMarkup(
+        $imgMarkup = $this->getImageImgLazyLoad(
             $path,
             $srcFilter,
             $placeholderFilter,
@@ -275,22 +283,83 @@ class Runtime
         return $html;
     }
 
-    public function getImageSrcset(?string $path, array $filters): string
-    {
-        $path = $this->processPath($path);
+    public function getImageImg(
+        string $path,
+        string $srcFilter,
+        array $srcsetFilters = [],
+        string $alt = '',
+        string $imgClass = '',
+        string $sizes = null,
+        string $importance = null,
+        string $imgDataAttributes = null,
+        string $htmlAlt = '',
+        string $id = ''
+    ): string {
+        $ariaDescribedBy = '';
 
-        return implode(', ', array_map(function ($filter) use ($path) {
-            return sprintf(
-                '%s %uw',
-                $this->cacheManager->getBrowserPath($path, $filter),
-                $this->getWidthFromFilter($path, $filter)
-            );
-        }, $filters));
+        if (!empty($htmlAlt)) {
+            $alt = '';
+            $ariaDescribedBy = 'aria-describedby="'.$id.'"';
+        }
+
+        $path = $this->processPath($path, $srcFilter);
+        $classHtml = '' !== $imgClass ? sprintf('class="%s"', $imgClass) : '';
+        $srcsetHtml = !empty($srcsetFilters) ?
+            sprintf('srcset="%s"', $this->getImageSrcset($path, $srcsetFilters)) :
+            '';
+        $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
+        $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
+        $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
+        $importanceHtml = $this->getImportanceHtml($importance);
+
+        return <<<HTML
+  <img
+    alt="$alt"
+    $ariaDescribedBy
+    $classHtml
+    src="$srcPath"
+    $srcsetHtml
+    $sizesHtml
+    $dimensionHtml
+    $importanceHtml
+    $imgDataAttributes
+  />
+HTML;
     }
 
-    private function processPath(?string $path): string
+    public function getSrcset(?string $path, array $filters): string
+    {
+        $path = $this->processPath($path, $filters[0]);
+
+        return $this->getImageSrcset($path, $filters);
+    }
+
+    private function getImageSrcset(?string $path, array $filters): string
+    {
+        return implode(
+            ', ',
+            array_map(function ($filter) use ($path) {
+                return sprintf(
+                    '%s %uw',
+                    $this->cacheManager->getBrowserPath($path, $filter),
+                    $this->getWidthFromFilter($path, $filter)
+                );
+            }, $filters)
+        );
+    }
+
+    private function processPath(?string $path, string $filter): string
     {
         if (!empty($path)) {
+            if ('dev' === $this->env) {
+                try {
+                    $this->fallbackImageResolver->resolve($filter);
+                    $this->dataManager->find($filter, $path);
+                } catch (NotLoadableException $e) {
+                    return $this->fallbackImageResolver->resolve($filter);
+                }
+            }
+
             return $path;
         }
 
@@ -301,7 +370,7 @@ class Runtime
         return $this->liipDefaultImage;
     }
 
-    private function getImgMarkup(
+    private function getImageImgLazyLoad(
         string $path,
         string $srcFilter,
         string $placeholderFilter = null,
@@ -310,7 +379,7 @@ class Runtime
         string $imgClass = '',
         string $sizes = null,
         string $importance = null,
-        string $dataAttributes = null,
+        string $imgDataAttributes = null,
         string $htmlAlt = '',
         string $id = ''
     ): string {
@@ -341,50 +410,7 @@ class Runtime
     $sizesHtml
     $dimensionHtml
     $importanceHtml
-    $dataAttributes
-  />
-HTML;
-    }
-
-    private function getNonLazyLoadImgMarkup(
-        string $path,
-        string $srcFilter,
-        array $srcsetFilters = [],
-        string $alt = '',
-        string $imgClass = '',
-        string $sizes = null,
-        string $importance = null,
-        string $dataAttributes = null,
-        string $htmlAlt = '',
-        string $id = ''
-    ): string {
-        $ariaDescribedBy = '';
-
-        if (!empty($htmlAlt)) {
-            $alt = '';
-            $ariaDescribedBy = 'aria-describedby="'.$id.'"';
-        }
-
-        $classHtml = '' !== $imgClass ? sprintf('class="%s"', $imgClass) : '';
-        $srcsetHtml = !empty($srcsetFilters) ?
-            sprintf('srcset="%s"', $this->getImageSrcset($path, $srcsetFilters)) :
-            '';
-        $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
-        $sizesHtml = null !== $sizes ? sprintf('sizes="%s"', $sizes) : '';
-        $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
-        $importanceHtml = $this->getImportanceHtml($importance);
-
-        return <<<HTML
-  <img
-    alt="$alt"
-    $ariaDescribedBy
-    $classHtml
-    src="$srcPath"
-    $srcsetHtml
-    $sizesHtml
-    $dimensionHtml
-    $importanceHtml
-    $dataAttributes
+    $imgDataAttributes
   />
 HTML;
     }
@@ -437,7 +463,7 @@ HTML;
 
     private function getSizeFromFilter(string $path, string $filter): BoxInterface
     {
-        return $this->cache->get(md5($path.$filter), function () use ($path, $filter) {
+        return $this->cache->get(md5($path . $filter), function () use ($path, $filter) {
             $box = $this->getImage($path, $filter)->getSize();
             $filterConfig = $this->filters[$filter];
 
@@ -508,10 +534,12 @@ HTML;
         }
 
         if (!\in_array($importance, ['low', 'high'], true)) {
-            throw new \InvalidArgumentException(sprintf(
-                'The importance %s is not valid. Only low and high are accepted.',
-                $importance
-            ));
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The importance %s is not valid. Only low and high are accepted.',
+                    $importance
+                )
+            );
         }
 
         return sprintf(' importance="%s"', $importance);
