@@ -204,18 +204,13 @@ class Runtime
             null,
             $imgImportance,
             $imgDataAttributes,
-            $htmlAlt
+            $htmlAlt,
+            $id
         );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         $html = <<<HTML
         <picture $classPictureHtml $pictureDataAttributes>
-                    $htmlAlt,
-                    $id
-                );
-                $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
-        
-        <picture $classPictureHtml>
           $sourcesMarkup
           $imgMarkup
         </picture>

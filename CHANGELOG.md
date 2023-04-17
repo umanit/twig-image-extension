@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.2.1] - 2023-04-17
+
+### Fixed
+
+- Broken code in `getImagePicture`
+
 ## [1.2.0] - 2023-03-15
 
 ### Added
@@ -118,7 +124,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 First release 🎉
 
-[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.2.0...main
+[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.2.1...main
+
+[1.2.1]: https://github.com/umanit/twig-image-extension/compare/1.2.0...1.2.1
 
 [1.2.0]: https://github.com/umanit/twig-image-extension/compare/1.1.1...1.2.0
 
