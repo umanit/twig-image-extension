@@ -78,7 +78,7 @@ If a default image needs to be rendered, the size will be guessed using the give
 - a filter ending with `xs` or `xxs` will give you a small default image
 - any other filter name will default to the medium size
 
-### `twig_image_extension.use_liip_default_image`
+#### `twig_image_extension.use_liip_default_image`
 
 This parameter will only be used as a backup if `allow_fallback` is set to `false` and requires you to use the default
 image mecanism of Liip (

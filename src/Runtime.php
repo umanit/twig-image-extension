@@ -359,17 +359,13 @@ HTML;
                     return $this->fallbackImageResolver->resolve($filter);
                 }
 
-                return '';
+                return $this->resolveLiipDefaultImage();
             }
 
             return $path;
         }
 
-        if (!$this->useLiipDefaultImage) {
-            throw new \InvalidArgumentException('The path cannot be empty');
-        }
-
-        return $this->liipDefaultImage;
+        return $this->resolveLiipDefaultImage();
     }
 
     private function getImageImgLazyLoad(
@@ -545,5 +541,14 @@ HTML;
         }
 
         return sprintf(' importance="%s"', $importance);
+    }
+
+    private function resolveLiipDefaultImage(): ?string
+    {
+        if (!$this->useLiipDefaultImage) {
+            throw new \InvalidArgumentException('The path cannot be empty');
+        }
+
+        return $this->liipDefaultImage;
     }
 }
