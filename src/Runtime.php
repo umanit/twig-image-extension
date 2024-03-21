@@ -27,8 +27,8 @@ class Runtime
     private ImagineInterface $imagine;
     private bool $useLiipDefaultImage;
     private ?string $liipDefaultImage;
-    private string $env;
     private FallbackImageResolver $fallbackImageResolver;
+    private bool $allowFallback;
 
     public function __construct(
         CacheInterface $cache,
@@ -38,8 +38,8 @@ class Runtime
         ImagineInterface $imagine,
         bool $useLiipDefaultImage,
         ?string $liipDefaultImage,
-        string $env,
-        FallbackImageResolver $fallbackImageResolver
+        FallbackImageResolver $fallbackImageResolver,
+        bool $allowFallback
     ) {
         $this->cache = $cache;
         $this->cacheManager = $cacheManager;
@@ -48,8 +48,8 @@ class Runtime
         $this->imagine = $imagine;
         $this->useLiipDefaultImage = $useLiipDefaultImage;
         $this->liipDefaultImage = $liipDefaultImage;
-        $this->env = $env;
         $this->fallbackImageResolver = $fallbackImageResolver;
+        $this->allowFallback = $allowFallback;
     }
 
     public function setLazyLoadConfiguration(
@@ -351,20 +351,22 @@ HTML;
     private function processPath(?string $path, string $filter): string
     {
         if (!empty($path)) {
-            if ('dev' === $this->env) {
-                try {
-                    $this->fallbackImageResolver->resolve($filter);
-                    $this->dataManager->find($filter, $path);
-                } catch (NotLoadableException $e) {
+            try {
+                $this->fallbackImageResolver->resolve($filter);
+                $this->dataManager->find($filter, $path);
+            } catch (NotLoadableException $e) {
+                if ($this->allowFallback) {
                     return $this->fallbackImageResolver->resolve($filter);
                 }
+
+                return '';
             }
 
             return $path;
         }
 
         if (!$this->useLiipDefaultImage) {
-            throw new \InvalidArgumentException('The path can not be empty');
+            throw new \InvalidArgumentException('The path cannot be empty');
         }
 
         return $this->liipDefaultImage;

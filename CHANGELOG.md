@@ -7,6 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- New `twig_image_extension.allow_fallback` configuration setting (defaults to `false`), to allow for fallback images to
+  be used in any environment
+
+### Changed
+
+- Catched `NotLoadableException` will trigger fallback image resolving if `twig_image_extension.allow_fallback` is set
+  to `true`
+
 ## [1.2.0] - 2023-03-15
 
 ### Added

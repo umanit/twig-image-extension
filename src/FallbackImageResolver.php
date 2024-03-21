@@ -13,7 +13,7 @@ class FallbackImageResolver
     private const MEDIUM = '640.png';
     private const SMALL = '320.png';
 
-    private $packages;
+    private Packages $packages;
 
     public function __construct(Packages $packages)
     {

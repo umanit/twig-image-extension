@@ -2,8 +2,8 @@
 
 This Twig extension facilitates the integration of responsive images markup in Twig templates.
 
-It uses [LiipImagineBundle](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/index.html) and its filters to generate
-HTML markup with all you need to handle responsive images.
+It uses [LiipImagineBundle](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/index.html) and its filters to
+generate HTML markup with all you need to handle responsive images.
 
 It also provides a JavaScript module to automatically instantiate [yall.js](https://github.com/malchata/yall.js/) on
 rendered images.
@@ -39,6 +39,7 @@ bin/console assets:install --symlink
 
 ```yaml
 umanit_twig_image:
+    allow_fallback: false
     use_liip_default_image: false
     class_selector: lazy
     placeholder_class_selector: lazy-placeholder
@@ -48,30 +49,43 @@ umanit_twig_image:
 Some functions render HTML markup with the ability to use lazy loading on images. It's possible to customize the classes
 used with the 3 options `class_selector`, `placeholder_class_selector` and `blur_class_selector`.
 
-| ⚠   | If you customize classes, you cannot use the javascript module and CSS that rely on them anymore |
-|-----|--------------------------------------------------------------------------------------------------|
+| ⚠ | If you customize classes, you cannot use the javascript module and CSS that rely on them anymore |
+|---|--------------------------------------------------------------------------------------------------|
 
 ### Fallback images
 
-By default, if the image path given in functions calls is null or empty, an exception is thrown. If you use the default
-image mecanism of Liip (see
-[the configuration of the bundle](https://symfony.com/bundles/LiipImagineBundle/current/configuration.html)), you can
-use it as a fallback for your calls. To do so, you need to change `use_liip_default_image` to `true`.
+By default, if the image path given in functions calls is null, empty or points to a missing file on the server, an
+exception is thrown.
+You have two options to avoid this:
 
-#### In dev environments
+* setting `twig_image_extension.allow_fallback` to `true`
+* setting `twig_image_extension.use_liip_default_image` to `true`
 
-If the path given leads to an image that is missing on the server, a default image will be rendered instead.
-The default images are available in four sizes:
+#### `twig_image_extension.allow_fallback`
+
+If the path given points to a missing file, a default image will be rendered instead. The default images are available
+in four sizes:
+
 - small: 320px wide
 - medium: 640 wide
 - large: 1280px wide
 - extra large: 2560px wide (for Retina screens mostly)
 
 If a default image needs to be rendered, the size will be guessed using the given Liip filter:
+
 - a filter ending with `2x` will give you an extra large default image
 - a filter ending with `xl` or `xxl` will give you a large default image
 - a filter ending with `xs` or `xxs` will give you a small default image
 - any other filter name will default to the medium size
+
+### `twig_image_extension.use_liip_default_image`
+
+This parameter will only be used as a backup if `allow_fallback` is set to `false` and requires you to use the default
+image mecanism of Liip (
+see [Liip configuration](https://symfony.com/bundles/LiipImagineBundle/current/configuration.html))
+
+| ⚠ | If neither `twig_image_extension.allow_fallback` nor `twig_image_extension.use_liip_default_image`  are set to `true` and the image isn't found on the server, an exception will be thrown! |
+|---|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 
 ## Usage
 
@@ -88,8 +102,8 @@ The following Twig functions are available in your templates.
 
 When a [LiipImagine filter](https://symfony.com/doc/2.0/bundles/LiipImagineBundle/filters.html#built-in-filters) is
 used, the extension will read its configuration and automatically guess the right width or height to apply in the
-markup. If it's not possible, the extension will try to get the original image dimensions instead. In both case, the result
-is saved in cache to avoid multiple process for the same image.
+markup. If it's not possible, the extension will try to get the original image dimensions instead. In both case, the
+result is saved in cache to avoid multiple process for the same image.
 
 When the used function is for lazy load, `lazy` and `lazy-placeholder` classes are used but can be customized as
 explained in the [Configuration](#configuration) part.
@@ -98,7 +112,8 @@ explained in the [Configuration](#configuration) part.
 (except for `downscale` and `upscale` filters, which fallback to the original image size). By doing this, sudden layout
 shifts are avoided for a better user experience.
 
-To use `htmlAlt`, the css file `umanit-alt-text.css` must be loaded. It hides the `div` used to display the html alt content.
+To use `htmlAlt`, the css file `umanit-alt-text.css` must be loaded. It hides the `div` used to display the html alt
+content.
 
 ### umanit_image_figure_lazy_load
 
@@ -131,6 +146,7 @@ Generates a `figure` tag with an `img` inside and his `noscript` version. The `l
   <summary>Click to show</summary>
 
 ##### Without htmlAlt
+
   ```twig
       umanit_image_figure_lazy_load(
         image.path,
@@ -182,6 +198,7 @@ HTML generated:
   ```
 
 ##### With htmlAlt
+
   ```twig
       umanit_image_figure_lazy_load(
         image.path,
@@ -201,8 +218,9 @@ HTML generated:
 HTML generated
 
   ```html
-  <figure class="class-figure">
-    <img
+
+<figure class="class-figure">
+  <img
       alt=""
       aria-describedby="1234567890"
       class="lazy lazy-placeholder lazy-blur img img--cover img--zoom"
@@ -211,9 +229,9 @@ HTML generated
       sizes="(min-width: 768px) 33.3vw, 100vw"
       data-srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
       width="600" height="400"
-    >
-    <noscript>
-      <img
+  >
+  <noscript>
+    <img
         class="img img--cover img--zoom"
         alt=""
         aria-describedby="1234567890"
@@ -221,11 +239,11 @@ HTML generated
         sizes="(min-width: 768px) 33.3vw, 100vw"
         srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
         width="600" height="400"
-      >
-    </noscript>
-    <figcaption class="class-figcaption">Figcaption text</figcaption>
-  </figure>
-  <div id="1234567890"><p>Html to describe content</p></div>
+    >
+  </noscript>
+  <figcaption class="class-figcaption">Figcaption text</figcaption>
+</figure>
+<div id="1234567890"><p>Html to describe content</p></div>
   ```
 
 The id used for `aria-describedby` is a random dynamically generated value.
@@ -259,6 +277,7 @@ Generates a `figure` tag with an `img` inside.
   <summary>Click to show</summary>
 
 ##### Without htmlAlt
+
   ```twig
       umanit_image_figure(
         image.path,
@@ -297,6 +316,7 @@ HTML generated:
   ```
 
 ##### With htmlAlt
+
  ```twig
       umanit_image_figure(
         image.path,
@@ -315,8 +335,9 @@ HTML generated:
 HTML generated
 
   ```html
-  <figure class="class-figure">
-    <img
+
+<figure class="class-figure">
+  <img
       alt=""
       aria-describedby="1234567890"
       class="lazy lazy-placeholder lazy-blur img img--cover img--zoom"
@@ -324,10 +345,10 @@ HTML generated
       sizes="(min-width: 768px) 33.3vw, 100vw"
       srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
       width="600" height="400"
-    >
-    <figcaption class="class-figcaption">Figcaption text</figcaption>
-  </figure>
-  <div id="1234567890"><p>Html to describe content</p></div>
+  >
+  <figcaption class="class-figcaption">Figcaption text</figcaption>
+</figure>
+<div id="1234567890"><p>Html to describe content</p></div>
   ```
 
 The id used for `aria-describedby` is a random dynamically generated value.
@@ -362,6 +383,7 @@ needed. The `lazy` and `lazy-placeholder` classes are add to facilitate the inte
   <summary>Click to show</summary>
 
 ##### Without htmlAlt
+
   ```twig
     umanit_image_picture_lazy_load(
       image.path,
@@ -406,6 +428,7 @@ HTML generated
   ```
 
 ##### With htmlAlt
+
   ```twig
     umanit_image_picture_lazy_load(
       image.path,
@@ -430,10 +453,11 @@ HTML generated
 HTML generated
 
   ```html
-  <picture class="class-picture">
-    <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w" width="600" height="400">
-    <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w" width="300" height="200">
-    <img
+
+<picture class="class-picture">
+  <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w" width="600" height="400">
+  <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w" width="300" height="200">
+  <img
       class="img img-fluid"
       alt=""
       aria-describedby="1234567890"
@@ -441,9 +465,9 @@ HTML generated
       data-src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
       data-srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
       width="600" height="400"
-    >
-  </picture>
-  <div id="1234567890"><p>Html to describe content</p></div>
+  >
+</picture>
+<div id="1234567890"><p>Html to describe content</p></div>
   ```
 
 The id used for `aria-describedby` is a random dynamically generated value.
@@ -475,6 +499,7 @@ needed.
   <summary>Click to show</summary>
 
 ##### Without htmlAlt
+
   ```twig
     umanit_image_picture(
       image.path,
@@ -517,6 +542,7 @@ HTML generated
   ```
 
 ##### With htmlAlt
+
   ```twig
     umanit_image_picture(
       image.path,
@@ -540,20 +566,22 @@ HTML generated
 HTML generated
 
   ```html
-  <picture class="class-picture">
-    <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w" width="600" height="400">
-    <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w" width="300" height="200">
-    <img
+
+<picture class="class-picture">
+  <source media="(min-width: 768px)" sizes="(min-width: 1400px) 25vw, 50vw" srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w" width="600" height="400">
+  <source srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg2 2880w" width="300" height="200">
+  <img
       class="img img-fluid"
       alt=""
       aria-describedby="1234567890"
       src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
       srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
       width="600" height="400"
-    >
-  </picture>
-  <div id="1234567890"><p>Html to describe content</p></div>
+  >
+</picture>
+<div id="1234567890"><p>Html to describe content</p></div>
   ```
+
 </details>
 
 ### umanit_image_img
@@ -595,15 +623,15 @@ HTML generated:
 
   ```html
   <img
-      alt="image alt"
-      class="img img--cover img--zoom"
-      src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
-      sizes="(min-width: 768px) 33.3vw, 100vw"
-      srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
-      width="600" height="400"
-      importance="low"
-      data-image="b" data-test
-  >
+    alt="image alt"
+    class="img img--cover img--zoom"
+    src="https://domain.tld/media/cache/resolve/small_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg"
+    sizes="(min-width: 768px) 33.3vw, 100vw"
+    srcset="https://domain.tld/media/cache/resolve/thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 260w, https://domain.tld/media/cache/resolve/large_thumbnail/99/30/c1f268bbf1487fb88734f2ba826b.jpeg 2880w"
+    width="600" height="400"
+    importance="low"
+    data-image="b" data-test
+>
   ```
 
 </details>
