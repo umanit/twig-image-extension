@@ -34,6 +34,7 @@ class UmanitTwigImageExtension extends Extension implements PrependExtensionInte
         }
 
         $container->setParameter('umanit_twig_image.use_liip_default_image', $config['use_liip_default_image']);
+        $container->setParameter('umanit_twig_image.allow_fallback', $config['allow_fallback']);
     }
 
     public function prepend(ContainerBuilder $container): void
