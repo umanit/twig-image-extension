@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.3.0] - 2024-03-22
+
 ### Added
 
 - New `twig_image_extension.allow_fallback` configuration setting (defaults to `false`), to allow for fallback images to
@@ -134,7 +136,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 First release 🎉
 
-[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.2.1...main
+[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.3.0...main
+
+[1.3.0]: https://github.com/umanit/twig-image-extension/compare/1.2.1...1.3.0
 
 [1.2.1]: https://github.com/umanit/twig-image-extension/compare/1.2.0...1.2.1
 
