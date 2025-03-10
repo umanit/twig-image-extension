@@ -29,6 +29,7 @@ class Runtime
     private ?string $liipDefaultImage;
     private FallbackImageResolver $fallbackImageResolver;
     private bool $allowFallback;
+    private string $liipTwigAssetsVersion;
 
     public function __construct(
         CacheInterface $cache,
@@ -39,7 +40,8 @@ class Runtime
         bool $useLiipDefaultImage,
         ?string $liipDefaultImage,
         FallbackImageResolver $fallbackImageResolver,
-        bool $allowFallback
+        bool $allowFallback,
+        ?string $liipTwigAssetsVersion
     ) {
         $this->cache = $cache;
         $this->cacheManager = $cacheManager;
@@ -50,6 +52,7 @@ class Runtime
         $this->liipDefaultImage = $liipDefaultImage;
         $this->fallbackImageResolver = $fallbackImageResolver;
         $this->allowFallback = $allowFallback;
+        $this->liipTwigAssetsVersion = $liipTwigAssetsVersion;
     }
 
     public function setLazyLoadConfiguration(
@@ -343,9 +346,28 @@ HTML;
         );
     }
 
+    /**
+     * @see vendor/liip/imagine-bundle/Templating/LazyFilterRuntime.php
+     */
+    private function cleanPath(string $path): string
+    {
+        if (empty($this->liipTwigAssetsVersion)) {
+            return $path;
+        }
+
+        $start = mb_strrpos($path, $this->liipTwigAssetsVersion);
+        if (mb_strlen($path) - mb_strlen($this->liipTwigAssetsVersion) === $start) {
+            return rtrim(mb_substr($path, 0, $start), '?');
+        }
+
+        return $path;
+    }
+
     private function processPath(?string $path, string $filter): string
     {
         if (!empty($path)) {
+            $path = $this->cleanPath($path);
+
             try {
                 $this->fallbackImageResolver->resolve($filter);
                 $this->dataManager->find($filter, $path);
