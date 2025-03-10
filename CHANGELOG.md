@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [1.3.2] - 2025-03-10
+
+### Fixed
+
+- Parameter `$liipTwigAssetsVersion` of `umanit_twig_image.runtime` can be `null`.
+
 ## [1.3.1] - 2025-03-10
 
 ### Fixed

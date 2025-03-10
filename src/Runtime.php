@@ -29,7 +29,7 @@ class Runtime
     private ?string $liipDefaultImage;
     private FallbackImageResolver $fallbackImageResolver;
     private bool $allowFallback;
-    private string $liipTwigAssetsVersion;
+    private ?string $liipTwigAssetsVersion = null;
 
     public function __construct(
         CacheInterface $cache,
