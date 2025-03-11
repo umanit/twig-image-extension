@@ -13,6 +13,7 @@ use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Liip\ImagineBundle\Imagine\Data\DataManager;
 use Liip\ImagineBundle\Imagine\Filter\FilterManager;
+use Symfony\Component\Filesystem\Path;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class Runtime
@@ -343,9 +344,23 @@ HTML;
         );
     }
 
+    /**
+     * Only get the path part of the URL, stripping potential query parameters, hashes, etc.
+     */
+    private function cleanupPath(string $path): string
+    {
+        if (Path::isAbsolute($path)) {
+            return parse_url($path, PHP_URL_PATH);
+        }
+
+        return $path;
+    }
+
     private function processPath(?string $path, string $filter): string
     {
         if (!empty($path)) {
+            $path = $this->cleanupPath($path);
+
             try {
                 $this->fallbackImageResolver->resolve($filter);
                 $this->dataManager->find($filter, $path);

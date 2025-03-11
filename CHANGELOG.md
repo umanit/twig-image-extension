@@ -11,6 +11,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Revert usage of `liip_imagine.twig.assets_version`
 
+### Added
+
+- Cleanup absolute image path by removing all after the path part
+
 ## [1.3.2] - 2025-03-10
 
 ### Fixed
