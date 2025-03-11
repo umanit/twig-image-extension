@@ -12,8 +12,6 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 class UmanitTwigImageExtension extends Extension implements PrependExtensionInterface
 {
-    private ?string $liipTwigAssetsVersion = null;
-
     public function load(array $configs, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
@@ -37,35 +35,11 @@ class UmanitTwigImageExtension extends Extension implements PrependExtensionInte
 
         $container->setParameter('umanit_twig_image.use_liip_default_image', $config['use_liip_default_image']);
         $container->setParameter('umanit_twig_image.allow_fallback', $config['allow_fallback']);
-
-        $this->handleLiipAssetsVersion($container);
     }
 
     public function prepend(ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('packages/assets.yaml');
-
-        foreach ($container->getExtensionConfig('liip_imagine') as $config) {
-            if (!isset($config['twig']['assets_version'])) {
-                continue;
-            }
-
-            $this->liipTwigAssetsVersion = $config['twig']['assets_version'];
-
-            break;
-        }
-    }
-
-    private function handleLiipAssetsVersion(ContainerBuilder $container): void
-    {
-        if (empty($this->liipTwigAssetsVersion)) {
-            return;
-        }
-
-        $container
-            ->getDefinition('umanit_twig_image.runtime')
-            ->setArgument('$liipTwigAssetsVersion', $this->liipTwigAssetsVersion)
-        ;
     }
 }

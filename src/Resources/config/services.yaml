@@ -17,7 +17,6 @@ services:
             - '%liip_imagine.default_image%'
             - '@umanit_twig_image.default_image_resolver'
             - '%umanit_twig_image.allow_fallback%'
-            - ~
         tags: ['twig.runtime']
 
     umanit_twig_image.default_image_resolver:
