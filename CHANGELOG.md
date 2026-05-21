@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-05-21
+
 ### Added
 
 - Add PHP 8.4 support
@@ -167,7 +169,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 First release 🎉
 
-[Unreleased]: https://github.com/umanit/twig-image-extension/compare/1.3.3...main
+[Unreleased]: https://github.com/umanit/twig-image-extension/compare/2.0.0...HEAD
+
+[2.0.0]: https://github.com/umanit/twig-image-extension/compare/1.3.3...2.0.0
 
 [1.3.3]: https://github.com/umanit/twig-image-extension/compare/1.3.2...1.3.3
 
