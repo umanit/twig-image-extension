@@ -7,6 +7,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Add PHP 8.4 support
+
+### Removed
+
+- Remove Twig 2.x support
+- Remove PHP <8.4 support
+
 ## [1.3.3] - 2025-03-11
 
 ### Reverted

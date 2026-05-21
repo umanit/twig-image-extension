@@ -23,9 +23,10 @@
     }
   },
   "require": {
-    "php": "^7.4|^8.0",
+    "php": "^8.4",
     "ext-mbstring": "*",
     "liip/imagine-bundle": "^2.3",
-    "twig/twig": "^2.12|^3.0"
+    "symfony/asset": "^7.4|^8.0",
+    "twig/twig": "^3.0"
   }
 }

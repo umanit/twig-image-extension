@@ -29,7 +29,7 @@ class UmanitTwigImageExtension extends Extension implements PrependExtensionInte
 
         if ($config['use_liip_default_image'] && null === $container->getParameter('liip_imagine.default_image')) {
             throw new \LogicException(
-                'You must define the parameter "liip_imagine.default_image" if you want to use the "use_liip_default_image" option.'
+                'You must define the parameter "liip_imagine.default_image" if you want to use the "use_liip_default_image" option.',
             );
         }
 
