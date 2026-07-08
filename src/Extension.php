@@ -34,7 +34,7 @@ class Extension extends AbstractExtension
             ),
             new TwigFunction(
                 'umanit_image_img',
-                [Runtime::class, 'getImgMarkup'],
+                [Runtime::class, 'getImageImg'],
                 ['is_safe' => ['html']],
             ),
             new TwigFunction(

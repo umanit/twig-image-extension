@@ -324,6 +324,10 @@ HTML;
 
     private function getImageSrcset(?string $path, array $filters): string
     {
+        if ($this->isDataUriPath($path)) {
+            return $path;
+        }
+
         return implode(
             ', ',
             array_map(function ($filter) use ($path) {
@@ -518,7 +522,7 @@ HTML;
 
     private function getImageDimensions(string $path, string $filter): string
     {
-        if (empty($filter)) {
+        if (empty($filter) || $this->isDataUriPath($path)) {
             return '';
         }
 
