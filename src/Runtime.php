@@ -19,8 +19,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 final readonly class Runtime
 {
     private array $filters;
-    private string $lazyLoadClassSelector;
-    private string $lazyLoadPlaceholderClassSelector;
+    private bool $lazyBlur;
     private string $lazyBlurClassSelector;
 
     public function __construct(
@@ -38,13 +37,11 @@ final readonly class Runtime
     }
 
     public function setLazyLoadConfiguration(
-        string $classSelector,
-        string $placeholderClassSelector,
-        string $lazyBlurClassSelector,
+        bool $blur,
+        string $blurClassSelector,
     ): void {
-        $this->lazyLoadClassSelector = $classSelector;
-        $this->lazyLoadPlaceholderClassSelector = $placeholderClassSelector;
-        $this->lazyBlurClassSelector = $lazyBlurClassSelector;
+        $this->lazyBlur = $blur;
+        $this->lazyBlurClassSelector = $blurClassSelector;
     }
 
     public function getImageFigure(
@@ -116,18 +113,6 @@ final readonly class Runtime
         $path = $this->processPath($path, $srcFilter);
         $id = str_replace('.', '', uniqid('', true));
 
-        $nonLazyLoadImgMarkup = $this->getImageImg(
-            $path,
-            $srcFilter,
-            $srcsetFilters,
-            $alt,
-            $imgClass,
-            $sizes,
-            $imgImportance,
-            $imgDataAttributes,
-            $htmlAlt,
-            $id,
-        );
         $imgMarkup = $this->getImageImgLazyLoad(
             $path,
             $srcFilter,
@@ -147,9 +132,6 @@ final readonly class Runtime
         $html = <<<HTML
         <figure $classFigureHtml $figureDataAttributes>
           $imgMarkup
-          <noscript>
-            $nonLazyLoadImgMarkup
-          </noscript>
           $figcaptionHtml
         </figure>
         HTML;
@@ -179,7 +161,7 @@ final readonly class Runtime
         $path = $this->processPath($path, $srcFilter);
         $id = str_replace('.', '', uniqid('', true));
 
-        $sourcesMarkup = $this->getSourcesMarkup($sources, false);
+        $sourcesMarkup = $this->getSourcesMarkup($sources);
         $imgMarkup = $this->getImageImg(
             $path,
             $srcFilter,
@@ -227,7 +209,7 @@ final readonly class Runtime
         $path = $this->processPath($path, $srcFilter);
         $id = str_replace('.', '', uniqid('', true));
 
-        $sourcesMarkup = $this->getSourcesMarkup($sources, true);
+        $sourcesMarkup = $this->getSourcesMarkup($sources);
         $imgMarkup = $this->getImageImgLazyLoad(
             $path,
             $srcFilter,
@@ -398,21 +380,35 @@ HTML;
             $ariaDescribedBy = 'aria-describedby="' . $id . '"';
         }
 
+        $blurStyleHtml = '';
+        $classNames = [];
+
         // data-uri support
         if ($this->isDataUriPath($path)) {
             $srcsetHtml = '';
             $srcPath = $path;
-            $placeholderPath = $path;
             $dimensionHtml = '';
         } else {
             $srcsetHtml = !empty($srcsetFilters)
-                ? \sprintf('data-srcset="%s"', $this->getImageSrcset($path, $srcsetFilters))
+                ? \sprintf('srcset="%s"', $this->getImageSrcset($path, $srcsetFilters))
                 : '';
             $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
-            $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
             $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
+
+            // Optional blur-up: expose the placeholder as a background-image, the
+            // real image is loaded natively and painted over it once ready.
+            if ($this->lazyBlur && null !== $placeholderFilter) {
+                $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
+                $blurStyleHtml = \sprintf('style="background-image:url(%s)"', $placeholderPath);
+                $classNames[] = $this->lazyBlurClassSelector;
+            }
         }
 
+        if ('' !== $imgClass) {
+            $classNames[] = $imgClass;
+        }
+
+        $classHtml = [] !== $classNames ? \sprintf('class="%s"', implode(' ', $classNames)) : '';
         $sizesHtml = null !== $sizes ? \sprintf('sizes="%s"', $sizes) : '';
         $importanceHtml = $this->getImportanceHtml($importance);
 
@@ -420,10 +416,11 @@ HTML;
   <img
     alt="$alt"
     $ariaDescribedBy
-    class="{$this->lazyLoadClassSelector} {$this->lazyLoadPlaceholderClassSelector} {$this->lazyBlurClassSelector} $imgClass"
-    src="$placeholderPath"
-    data-src="$srcPath"
+    $classHtml
+    src="$srcPath"
     $srcsetHtml
+    loading="lazy"
+    $blurStyleHtml
     $sizesHtml
     $dimensionHtml
     $importanceHtml
@@ -432,9 +429,8 @@ HTML;
 HTML;
     }
 
-    private function getSourcesMarkup(array $sources, bool $isLazyLoad): string
+    private function getSourcesMarkup(array $sources): string
     {
-        $srcSetAttribute = $isLazyLoad ? 'data-srcset' : 'srcset';
         $sourcesHtml = [];
 
         foreach ($sources as $sourcePath => $sourceDataset) {
@@ -453,7 +449,7 @@ HTML;
             }
 
             $sourcesHtml[] = <<<HTML
-<source $media $sizes $srcSetAttribute="$srcSet" $dimensionHtml>
+<source $media $sizes srcset="$srcSet" $dimensionHtml>
 HTML;
         }
 
