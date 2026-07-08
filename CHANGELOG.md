@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-07-08
+
 ### Added
 
 - Support data-uri for image path
@@ -173,7 +175,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 First release 🎉
 
-[Unreleased]: https://github.com/umanit/twig-image-extension/compare/2.0.0...HEAD
+[Unreleased]: https://github.com/umanit/twig-image-extension/compare/2.0.1...HEAD
+
+[2.0.0]: https://github.com/umanit/twig-image-extension/compare/2.0.0...2.0.1
 
 [2.0.0]: https://github.com/umanit/twig-image-extension/compare/1.3.3...2.0.0
 
