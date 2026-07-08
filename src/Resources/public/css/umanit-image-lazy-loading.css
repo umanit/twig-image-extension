@@ -1,14 +1,16 @@
-/* Hide .lazy elements if JavaScript is off */
-.no-js .lazy {
-    display: none;
-}
-
-/* Filter on lazy load images */
-picture img.lazy-placeholder, img.lazy-placeholder {
+/* Optional blur-up effect for images rendered by the `*_lazy_load` helpers
+   when the `blur` option is enabled. The low-quality placeholder is exposed
+   as a `background-image`; the real image is loaded natively via
+   `loading="lazy"` and painted over it once ready. */
+img.lazy-blur {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     filter: blur(20px);
+    transition: filter 0.5s;
 }
 
-/* Filter transition on lazy load */
-picture img.lazy-blur, img.lazy-blur {
-    transition: filter 0.5s;
+/* Class added by the JS listener once the real image has loaded. */
+img.lazy-blur.lazy-loaded {
+    filter: blur(0);
 }

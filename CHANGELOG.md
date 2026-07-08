@@ -7,6 +7,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING** Lazy loading now relies on the native `loading="lazy"` attribute instead of [yall.js](https://github.com/malchata/yall.js/).
+  The `*_lazy_load` helpers no longer emit `data-src`/`data-srcset` nor a `<noscript>` fallback.
+- **BREAKING** Configuration: `lazy_load.class_selector` and `lazy_load.placeholder_class_selector` are removed
+  (no longer needed with native lazy loading). A new `lazy_load.blur` boolean option (default `false`) toggles the
+  optional blur-up effect.
+
+### Removed
+
+- Drop the yall.js dependency and its instantiation wrapper.
+
 ## [2.0.2] - 2026-07-08
 
 ### Fixed
