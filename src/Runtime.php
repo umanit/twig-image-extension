@@ -91,7 +91,7 @@ class Runtime
             $imgImportance,
             $imgDataAttributes,
             $htmlAlt,
-            $id
+            $id,
         );
 
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
@@ -142,7 +142,7 @@ class Runtime
             $imgImportance,
             $imgDataAttributes,
             $htmlAlt,
-            $id
+            $id,
         );
         $imgMarkup = $this->getImageImgLazyLoad(
             $path,
@@ -155,7 +155,7 @@ class Runtime
             $imgImportance,
             $imgDataAttributes,
             $htmlAlt,
-            $id
+            $id,
         );
         $classFigureHtml = '' !== $figureClass ? sprintf('class="%s"', $figureClass) : '';
         $figcaptionHtml = $this->getFigcaptionHtml($figcaptionText, $figcaptionClass);
@@ -206,7 +206,7 @@ class Runtime
             $imgImportance,
             $imgDataAttributes,
             $htmlAlt,
-            $id
+            $id,
         );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
@@ -253,18 +253,12 @@ class Runtime
             $imgClass,
             null,
             $importance,
-            $imgDataAttributes
+            $imgDataAttributes,
         );
         $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
 
         $html = <<<HTML
         <picture $classPictureHtml $pictureDataAttributes>
-                    $htmlAlt,
-                    $id
-                );
-                $classPictureHtml = '' !== $pictureClass ? sprintf('class="%s"', $pictureClass) : '';
-        
-        <picture $classPictureHtml>
           $sourcesMarkup
           $imgMarkup
         </picture>
@@ -341,11 +335,15 @@ HTML;
 
     private function isDataUriPath(string $path): bool
     {
-        return str_starts_with($path, 'data:');
+        return 'data:' === substr($path, 0, 5);
     }
 
     private function getImageSrcset(?string $path, array $filters): string
     {
+        if ($this->isDataUriPath($path)) {
+            return $path;
+        }
+
         return implode(
             ', ',
             array_map(function ($filter) use ($path) {
@@ -540,7 +538,7 @@ HTML;
 
     private function getImageDimensions(string $path, string $filter): string
     {
-        if (empty($filter)) {
+        if (empty($filter) || $this->isDataUriPath($path)) {
             return '';
         }
 
@@ -572,8 +570,8 @@ HTML;
             throw new \InvalidArgumentException(
                 sprintf(
                     'The importance %s is not valid. Only low and high are accepted.',
-                    $importance
-                )
+                    $importance,
+                ),
             );
         }
 
