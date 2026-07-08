@@ -7,10 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-07-08
+
 ### Changed
 
-- **BREAKING** Lazy loading now relies on the native `loading="lazy"` attribute instead of [yall.js](https://github.com/malchata/yall.js/).
-  The `*_lazy_load` helpers no longer emit `data-src`/`data-srcset` nor a `<noscript>` fallback.
+- **BREAKING** Lazy loading now relies on the native `loading="lazy"` attribute instead
+  of [yall.js](https://github.com/malchata/yall.js/). The `*_lazy_load` helpers no longer emit `data-src`/`data-srcset`
+  nor a `<noscript>` fallback.
 - **BREAKING** Configuration: `lazy_load.class_selector` and `lazy_load.placeholder_class_selector` are removed
   (no longer needed with native lazy loading). A new `lazy_load.blur` boolean option (default `false`) toggles the
   optional blur-up effect.
@@ -195,7 +198,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 First release 🎉
 
-[Unreleased]: https://github.com/umanit/twig-image-extension/compare/2.0.2...HEAD
+[Unreleased]: https://github.com/umanit/twig-image-extension/compare/2.1.0...HEAD
+
+[2.1.0]: https://github.com/umanit/twig-image-extension/compare/2.0.2...2.1.0
 
 [2.0.2]: https://github.com/umanit/twig-image-extension/compare/2.0.1...2.0.2
 
