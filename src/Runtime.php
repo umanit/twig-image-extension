@@ -278,12 +278,21 @@ final readonly class Runtime
 
         $path = $this->processPath($path, $srcFilter);
         $classHtml = '' !== $imgClass ? \sprintf('class="%s"', $imgClass) : '';
-        $srcsetHtml = !empty($srcsetFilters) ?
-            \sprintf('srcset="%s"', $this->getImageSrcset($path, $srcsetFilters)) :
-            '';
-        $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
+
+        // data-uri support
+        if ($this->isDataUriPath($path)) {
+            $srcsetHtml = '';
+            $srcPath = $path;
+            $dimensionHtml = '';
+        } else {
+            $srcsetHtml = !empty($srcsetFilters)
+                ? \sprintf('srcset="%s"', $this->getImageSrcset($path, $srcsetFilters))
+                : '';
+            $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
+            $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
+        }
+
         $sizesHtml = null !== $sizes ? \sprintf('sizes="%s"', $sizes) : '';
-        $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
         $importanceHtml = $this->getImportanceHtml($importance);
 
         return <<<HTML
@@ -306,6 +315,11 @@ HTML;
         $path = $this->processPath($path, $filters[0]);
 
         return $this->getImageSrcset($path, $filters);
+    }
+
+    private function isDataUriPath(string $path): bool
+    {
+        return str_starts_with($path, 'data:');
     }
 
     private function getImageSrcset(?string $path, array $filters): string
@@ -337,6 +351,10 @@ HTML;
     private function processPath(?string $path, string $filter): string
     {
         if (!empty($path)) {
+            if ($this->isDataUriPath($path)) {
+                return $path;
+            }
+
             $path = $this->cleanupPath($path);
 
             try {
@@ -376,13 +394,22 @@ HTML;
             $ariaDescribedBy = 'aria-describedby="' . $id . '"';
         }
 
-        $srcsetHtml = !empty($srcsetFilters) ?
-            \sprintf('data-srcset="%s"', $this->getImageSrcset($path, $srcsetFilters)) :
-            '';
-        $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
+        // data-uri support
+        if ($this->isDataUriPath($path)) {
+            $srcsetHtml = '';
+            $srcPath = $path;
+            $placeholderPath = $path;
+            $dimensionHtml = '';
+        } else {
+            $srcsetHtml = !empty($srcsetFilters)
+                ? \sprintf('data-srcset="%s"', $this->getImageSrcset($path, $srcsetFilters))
+                : '';
+            $srcPath = $this->cacheManager->getBrowserPath($path, $srcFilter);
+            $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
+            $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
+        }
+
         $sizesHtml = null !== $sizes ? \sprintf('sizes="%s"', $sizes) : '';
-        $placeholderPath = $this->cacheManager->getBrowserPath($path, $placeholderFilter);
-        $dimensionHtml = $this->getImageDimensions($path, $srcFilter);
         $importanceHtml = $this->getImportanceHtml($importance);
 
         return <<<HTML

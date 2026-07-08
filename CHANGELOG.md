@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- Support data-uri for image path
+
 ## [2.0.0] - 2026-05-21
 
 ### Added
